@@ -6,8 +6,9 @@ import java.io.Reader
 /**
  * The bundled food composition table (USDA SR28) plus search.
  *
- * File format: tab separated, first row is a header of
+ * Food file: tab separated, first row is a header of
  * `id, name, group, common, <nutrient keys...>`; values are per 100 g, empty = unknown.
+ * Portion file: tab separated `id, description, grams` (grams for one unit).
  */
 class FoodDatabase(val foods: List<Food>) {
 
@@ -23,7 +24,8 @@ class FoodDatabase(val foods: List<Food>) {
     companion object {
         const val USDA_PREFIX = "usda:"
 
-        fun parse(reader: Reader): FoodDatabase {
+        fun parse(reader: Reader, portionsReader: Reader? = null): FoodDatabase {
+            val portions = portionsReader?.let(::parsePortions) ?: emptyMap()
             val lines = BufferedReader(reader).lineSequence().iterator()
             if (!lines.hasNext()) return FoodDatabase(emptyList())
             val header = lines.next().split('\t')
@@ -44,9 +46,20 @@ class FoodDatabase(val foods: List<Food>) {
                     group = f.getOrElse(2) { "" },
                     commonName = f.getOrElse(3) { "" },
                     per100g = NutrientProfile(values),
+                    portions = portions[f[0]] ?: emptyList(),
                 )
             }
             return FoodDatabase(foods)
+        }
+
+        private fun parsePortions(reader: Reader): Map<String, List<Portion>> {
+            val result = HashMap<String, MutableList<Portion>>()
+            BufferedReader(reader).lineSequence().drop(1).forEach { line ->
+                val f = line.split('\t')
+                val grams = f.getOrNull(2)?.toDoubleOrNull() ?: return@forEach
+                if (grams > 0) result.getOrPut(f[0]) { ArrayList() } += Portion(f[1], grams)
+            }
+            return result
         }
 
         fun normalize(s: String): String = s.lowercase().replace(Regex("[^a-z0-9%]+"), " ").trim()

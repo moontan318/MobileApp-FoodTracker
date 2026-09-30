@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Convert USDA SR28 (ABBREV.txt + FOOD_DES.txt) into the compact TSV bundled with the app.
+"""Convert USDA SR28 (ABBREV.txt, FOOD_DES.txt, WEIGHT.txt) into the compact TSVs bundled with the app.
 
 Source data: USDA National Nutrient Database for Standard Reference, Release 28
-(public domain). The raw files can be obtained from the USDA or from the
-`fda-nutrient-database` npm package (`npm pack fda-nutrient-database`).
+(public domain). The raw files can be obtained from the USDA, from the
+`fda-nutrient-database` npm package (ABBREV.txt, FOOD_DES.txt) and from
+github.com/alyssaq/usda-sqlite (data/WEIGHT.txt).
 
-Usage: python3 tools/build_food_db.py <dir with ABBREV.txt and FOOD_DES.txt> app/src/main/assets/usda_sr28.tsv
+Usage: python3 tools/build_food_db.py <dir with the SR28 files> app/src/main/assets
+Writes usda_sr28.tsv (nutrients per 100 g) and usda_portions.tsv (household measures).
 """
 import sys
 from pathlib import Path
@@ -36,8 +38,9 @@ def fields(line):
     return [f.strip("~") for f in line.rstrip("\r\n").split("^")]
 
 
-def main(src, dest):
+def main(src, dest_dir):
     src = Path(src)
+    dest_dir = Path(dest_dir)
     desc = {}
     for line in (src / "FOOD_DES.txt").read_text(encoding="latin-1").splitlines():
         f = fields(line)
@@ -51,8 +54,19 @@ def main(src, dest):
         values = [f[COLUMNS[k]] for k in keys]
         out.append("\t".join([f[0], name, GROUPS.get(group, ""), common] + values))
 
-    Path(dest).write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"wrote {len(out) - 1} foods to {dest}")
+    (dest_dir / "usda_sr28.tsv").write_text("\n".join(out) + "\n", encoding="utf-8")
+    print(f"wrote {len(out) - 1} foods")
+
+    # WEIGHT.txt: id, seq, amount, description, grams. Stored as grams for ONE unit.
+    portions = ["\t".join(["id", "description", "grams"])]
+    for line in (src / "WEIGHT.txt").read_text(encoding="latin-1").splitlines():
+        f = fields(line)
+        amount, grams = float(f[2] or 0), float(f[4] or 0)
+        if f[0] not in desc or amount <= 0 or grams <= 0:
+            continue
+        portions.append("\t".join([f[0], f[3].strip(), f"{grams / amount:.4g}"]))
+    (dest_dir / "usda_portions.tsv").write_text("\n".join(portions) + "\n", encoding="utf-8")
+    print(f"wrote {len(portions) - 1} portions")
 
 
 if __name__ == "__main__":

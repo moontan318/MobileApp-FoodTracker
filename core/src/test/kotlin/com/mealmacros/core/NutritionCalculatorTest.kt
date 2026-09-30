@@ -64,8 +64,11 @@ class NutritionCalculatorTest {
 
     @Test
     fun bundledDatabaseParsesAndSearches() {
-        val file = File("../app/src/main/assets/usda_sr28.tsv")
-        val db = file.reader().use { FoodDatabase.parse(it) }
+        val db = File("../app/src/main/assets/usda_sr28.tsv").reader().use { foods ->
+            File("../app/src/main/assets/usda_portions.tsv").reader().use { portions ->
+                FoodDatabase.parse(foods, portions)
+            }
+        }
         assertEquals(8789, db.foods.size)
 
         val potatoes = assertNotNull(db.get("usda:11674"))
@@ -78,5 +81,21 @@ class NutritionCalculatorTest {
         assertTrue(results.take(10).any { it.name.startsWith("Potatoes") }, results.take(10).joinToString { it.name })
         assertTrue(db.search("ground beef").take(10).any { it.name.startsWith("Beef, ground") })
         assertTrue(db.search("hamburger").isNotEmpty())
+    }
+
+    @Test
+    fun householdPortions() {
+        val db = File("../app/src/main/assets/usda_sr28.tsv").reader().use { foods ->
+            File("../app/src/main/assets/usda_portions.tsv").reader().use { portions ->
+                FoodDatabase.parse(foods, portions)
+            }
+        }
+        val banana = assertNotNull(db.get("usda:09040"))
+        val medium = assertNotNull(banana.defaultPortion())
+        assertEquals("medium (7\" to 7-7/8\" long)", medium.description)
+        assertEquals(118.0, medium.grams)
+        // 1 medium banana = 118 g, banana is 89 kcal / 100 g.
+        assertEquals(89.0 * 1.18, banana.nutrientsFor(medium.grams).amount(Nutrient.ENERGY), 1e-9)
+        assertTrue(db.foods.count { it.portions.isNotEmpty() } > 8000)
     }
 }

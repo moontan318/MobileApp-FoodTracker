@@ -6,6 +6,7 @@ import com.mealmacros.core.Food
 import com.mealmacros.core.Ingredient
 import com.mealmacros.core.Nutrient
 import com.mealmacros.core.NutrientProfile
+import com.mealmacros.core.Portion
 import com.mealmacros.core.Recipe
 import org.json.JSONArray
 import org.json.JSONObject
@@ -94,6 +95,7 @@ class JsonStore(file: File) {
             .put("name", f.name)
             .put("group", f.group)
             .put("per100g", encodeProfile(f.per100g))
+            .put("portions", JSONArray(f.portions.map { JSONObject().put("description", it.description).put("grams", it.grams) }))
 
         private fun decodeFood(o: JSONObject) = Food(
             id = o.getString("id"),
@@ -101,6 +103,7 @@ class JsonStore(file: File) {
             group = o.optString("group"),
             per100g = decodeProfile(o.optJSONObject("per100g")),
             isCustom = true,
+            portions = o.optJSONArray("portions").objects().map { Portion(it.getString("description"), it.getDouble("grams")) },
         )
 
         private fun encodeEntry(e: DiaryEntry) = JSONObject()
@@ -109,6 +112,8 @@ class JsonStore(file: File) {
             .put("grams", e.grams)
             .put("timestamp", e.timestamp)
             .put("recipeId", e.recipeId ?: JSONObject.NULL)
+            .put("foodId", e.foodId ?: JSONObject.NULL)
+            .put("amountLabel", e.amountLabel ?: JSONObject.NULL)
             .put("nutrients", encodeProfile(e.nutrients))
 
         private fun decodeEntry(o: JSONObject) = DiaryEntry(
@@ -117,6 +122,8 @@ class JsonStore(file: File) {
             grams = o.getDouble("grams"),
             timestamp = o.getLong("timestamp"),
             recipeId = if (o.isNull("recipeId")) null else o.getString("recipeId"),
+            foodId = if (o.isNull("foodId")) null else o.getString("foodId"),
+            amountLabel = if (o.isNull("amountLabel")) null else o.getString("amountLabel"),
             nutrients = decodeProfile(o.optJSONObject("nutrients")),
         )
 

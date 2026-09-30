@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.mealmacros.app.AppViewModel
 import com.mealmacros.app.DraftItem
 import com.mealmacros.app.Screen
+import com.mealmacros.app.SearchTarget
 import com.mealmacros.app.formatPlain
 import com.mealmacros.app.parseNumber
 import com.mealmacros.core.Nutrient
@@ -102,7 +103,8 @@ fun RecipeEditorScreen(vm: AppViewModel) {
                 Text("Ingredients", style = MaterialTheme.typography.titleMedium)
                 if (draft.items.isEmpty()) {
                     Text(
-                        "Add each ingredient with the weight you use in the whole recipe.",
+                        "Add each ingredient with the amount you use in the whole recipe, by weight or by " +
+                            "size (e.g. 2 medium potatoes).",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -122,7 +124,7 @@ fun RecipeEditorScreen(vm: AppViewModel) {
                 )
             }
             item {
-                OutlinedButton(onClick = { vm.navigate(Screen.FoodSearch) }, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = { vm.navigate(Screen.FoodSearch(SearchTarget.RECIPE)) }, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Filled.Add, null)
                     Text("Add ingredient", Modifier.padding(start = 8.dp))
                 }

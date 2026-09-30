@@ -1,5 +1,6 @@
 package com.mealmacros.app.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,13 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,41 +23,47 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.mealmacros.app.AppViewModel
 import com.mealmacros.app.Screen
-import com.mealmacros.app.parseNumber
+import com.mealmacros.app.SearchTarget
 import com.mealmacros.core.Food
 import com.mealmacros.core.FoodDatabase
-import com.mealmacros.core.Nutrient
+import com.mealmacros.core.NutritionCalculator
+import com.mealmacros.core.Recipe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoodSearchScreen(vm: AppViewModel) {
+fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
+    val forDiary = target == SearchTarget.DIARY
     var query by rememberSaveable { mutableStateOf("") }
     var results by remember { mutableStateOf(emptyList<Food>()) }
     var selected by remember { mutableStateOf<Food?>(null) }
     val db = vm.foodDatabase
     val customFoods = vm.customFoods
     val focusRequester = remember { FocusRequester() }
+    val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(query, db, customFoods) {
         delay(150) // debounce typing
@@ -67,21 +73,24 @@ fun FoodSearchScreen(vm: AppViewModel) {
     }
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
+    val matchingRecipes = if (forDiary) matchRecipes(vm.recipes, query) else emptyList()
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add ingredient") },
+                title = { Text(if (forDiary) "Add to diary · ${vm.diaryDayLabel()}" else "Add ingredient") },
                 navigationIcon = {
                     IconButton(onClick = { vm.back() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackbar) },
     ) { padding ->
         Column(Modifier.padding(padding)) {
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text("Search foods, e.g. potatoes raw") },
+                placeholder = { Text(if (forDiary) "Search foods, e.g. banana" else "Search foods, e.g. potatoes raw") },
                 leadingIcon = { Icon(Icons.Filled.Search, null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) IconButton(onClick = { query = "" }) { Icon(Icons.Filled.Clear, "Clear") }
@@ -105,6 +114,12 @@ fun FoodSearchScreen(vm: AppViewModel) {
                         Text("Create your own food (from a label)", Modifier.padding(start = 8.dp))
                     }
                 }
+                if (matchingRecipes.isNotEmpty()) {
+                    item { Text("My recipes", style = MaterialTheme.typography.titleSmall) }
+                    items(matchingRecipes, key = { "recipe:" + it.id }) { recipe ->
+                        RecipeResultCard(recipe) { vm.navigate(Screen.RecipeDetail(recipe.id)) }
+                    }
+                }
                 if (db == null) {
                     item {
                         Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
@@ -121,13 +136,17 @@ fun FoodSearchScreen(vm: AppViewModel) {
                     }
                     item {
                         Text(
-                            "Tip: include the preparation in your search (e.g. “rice raw” or “chicken breast roasted”) " +
-                                "and weigh ingredients in the same state.",
+                            if (forDiary) {
+                                "Search for a food, then enter a weight or pick a size such as “1 medium”."
+                            } else {
+                                "Tip: include the preparation in your search (e.g. “rice raw” or “chicken breast roasted”) " +
+                                    "and weigh ingredients in the same state."
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                } else if (results.isEmpty() && db != null) {
+                } else if (results.isEmpty() && matchingRecipes.isEmpty() && db != null) {
                     item {
                         Text(
                             "No foods match “$query”. Try fewer or different words, or create your own food.",
@@ -136,6 +155,9 @@ fun FoodSearchScreen(vm: AppViewModel) {
                         )
                     }
                 } else {
+                    if (matchingRecipes.isNotEmpty() && results.isNotEmpty()) {
+                        item { Text("Foods", style = MaterialTheme.typography.titleSmall) }
+                    }
                     items(results, key = { it.id }) { food ->
                         FoodCard(food, onClick = { selected = food })
                     }
@@ -145,58 +167,48 @@ fun FoodSearchScreen(vm: AppViewModel) {
     }
 
     selected?.let { food ->
-        AddIngredientDialog(
+        AmountDialog(
             food = food,
+            confirmLabel = if (forDiary) "Log" else "Add",
+            preferPortion = forDiary,
             onDismiss = { selected = null },
-            onAdd = { grams ->
+            onConfirm = { amount ->
                 selected = null
-                vm.addIngredient(food, grams)
-                vm.back()
+                if (forDiary) {
+                    vm.logFood(food, amount)
+                    val what = amount.label ?: formatGrams(amount.grams)
+                    scope.launch { snackbar.showSnackbar("Logged $what of ${food.name}") }
+                } else {
+                    vm.addIngredient(food, amount)
+                    vm.back()
+                }
             },
         )
     }
 }
 
+private fun matchRecipes(recipes: List<Recipe>, query: String): List<Recipe> {
+    val tokens = FoodDatabase.normalize(query).split(' ').filter { it.isNotEmpty() }
+    val all = recipes.sortedBy { it.name.lowercase() }
+    if (tokens.isEmpty()) return all
+    return all.filter { r -> FoodDatabase.normalize(r.name).let { name -> tokens.all { it in name } } }
+}
+
 @Composable
-private fun AddIngredientDialog(food: Food, onDismiss: () -> Unit, onAdd: (Double) -> Unit) {
-    var text by remember { mutableStateOf("") }
-    val grams = parseNumber(text)?.takeIf { it > 0 }
-    val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) { focusRequester.requestFocus() }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(food.name) },
-        text = {
-            Column(Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { v -> text = v.filter { it.isDigit() || it == '.' || it == ',' } },
-                    label = { Text("Weight in recipe") },
-                    suffix = { Text("g") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                )
-                val preview = if (grams != null) food.per100g * (grams / 100.0) else food.per100g
-                Text(
-                    (if (grams != null) "${formatGrams(grams)}: " else "Per 100 g: ") + macroSummary(preview),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-                if (!food.per100g.isKnown(Nutrient.ENERGY)) {
-                    Text(
-                        "This food has no energy data.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(enabled = grams != null, onClick = { grams?.let(onAdd) }) { Text("Add") }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
-    )
+private fun RecipeResultCard(recipe: Recipe, onClick: () -> Unit) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+            Text(recipe.name, style = MaterialTheme.typography.titleSmall)
+            Text(
+                "Recipe · ${formatGrams(recipe.totalWeight)} · per 100 g",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Text(macroSummary(NutritionCalculator.per100g(recipe)), style = MaterialTheme.typography.bodySmall)
+        }
+    }
 }

@@ -1,6 +1,9 @@
 package com.mealmacros.core
 
-/** A food with its nutrient content per 100 g. */
+/** A household measure, e.g. "medium (7" to 7-7/8" long)" = 118 g for one banana. */
+data class Portion(val description: String, val grams: Double)
+
+/** A food with its nutrient content per 100 g and its household measures. */
 data class Food(
     val id: String,
     val name: String,
@@ -8,7 +11,15 @@ data class Food(
     val per100g: NutrientProfile,
     val commonName: String = "",
     val isCustom: Boolean = false,
-)
+    val portions: List<Portion> = emptyList(),
+) {
+    fun nutrientsFor(grams: Double): NutrientProfile = per100g * (grams / 100.0)
+
+    /** The portion to suggest first when logging a whole item (e.g. "medium"), if any. */
+    fun defaultPortion(): Portion? =
+        portions.firstOrNull { it.description.startsWith("medium") }
+            ?: portions.firstOrNull { it.description.contains("medium") }
+}
 
 /**
  * An ingredient in a recipe. A copy of the food's per-100 g nutrients is kept so a
@@ -45,7 +56,10 @@ data class Recipe(
     val totalWeight: Double get() = cookedWeight?.takeIf { it > 0 } ?: rawWeight
 }
 
-/** A logged portion. Nutrients are snapshotted so later recipe edits don't rewrite history. */
+/**
+ * A logged recipe portion or single food. Nutrients are snapshotted so later edits
+ * don't rewrite history. [amountLabel] describes a household measure, e.g. "1 × medium".
+ */
 data class DiaryEntry(
     val id: String,
     val name: String,
@@ -53,4 +67,6 @@ data class DiaryEntry(
     val timestamp: Long,
     val nutrients: NutrientProfile,
     val recipeId: String? = null,
+    val foodId: String? = null,
+    val amountLabel: String? = null,
 )

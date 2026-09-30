@@ -48,7 +48,7 @@ private fun AppRoot(vm: AppViewModel) {
         Screen.Home -> HomeScreen(vm)
         is Screen.RecipeDetail -> RecipeDetailScreen(vm, screen.recipeId)
         Screen.RecipeEditor -> RecipeEditorScreen(vm)
-        Screen.FoodSearch -> FoodSearchScreen(vm)
+        is Screen.FoodSearch -> FoodSearchScreen(vm, screen.target)
         is Screen.CustomFoodEditor -> CustomFoodScreen(vm, screen.foodId)
     }
 }

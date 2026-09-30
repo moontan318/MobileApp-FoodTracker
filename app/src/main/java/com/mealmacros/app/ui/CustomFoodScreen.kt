@@ -38,6 +38,7 @@ import com.mealmacros.core.Food
 import com.mealmacros.core.Nutrient
 import com.mealmacros.core.NutrientCategory
 import com.mealmacros.core.NutrientProfile
+import com.mealmacros.core.Portion
 
 /** Nutrients shown by default - the ones found on a typical nutrition label. */
 private val LABEL_NUTRIENTS = listOf(
@@ -51,6 +52,9 @@ fun CustomFoodScreen(vm: AppViewModel, foodId: String?) {
     val existing = foodId?.let { vm.customFood(it) }
     var name by rememberSaveable { mutableStateOf(existing?.name ?: "") }
     var basisText by rememberSaveable { mutableStateOf("100") }
+    val existingPortion = existing?.portions?.firstOrNull()
+    var portionName by rememberSaveable { mutableStateOf(existingPortion?.description ?: "") }
+    var portionGramsText by rememberSaveable { mutableStateOf(existingPortion?.grams?.let(::formatPlain) ?: "") }
     val values = remember {
         mutableStateMapOf<Nutrient, String>().apply {
             existing?.per100g?.values?.forEach { (n, v) -> put(n, formatPlain(v)) }
@@ -59,7 +63,10 @@ fun CustomFoodScreen(vm: AppViewModel, foodId: String?) {
     var showAll by rememberSaveable { mutableStateOf(existing?.per100g?.values?.keys?.any { it !in LABEL_NUTRIENTS } == true) }
     val basis = parseNumber(basisText)?.takeIf { it > 0 }
     val invalid = values.values.any { it.isNotBlank() && parseNumber(it) == null }
-    val canSave = name.isNotBlank() && basis != null && !invalid && parseNumber(values[Nutrient.ENERGY] ?: "") != null
+    val portionGrams = parseNumber(portionGramsText)?.takeIf { it > 0 }
+    val portionInvalid = portionGramsText.isNotBlank() && portionGrams == null
+    val canSave = name.isNotBlank() && basis != null && !invalid && !portionInvalid &&
+        parseNumber(values[Nutrient.ENERGY] ?: "") != null
 
     Scaffold(
         topBar = {
@@ -79,6 +86,9 @@ fun CustomFoodScreen(vm: AppViewModel, foodId: String?) {
                                 group = "My foods",
                                 per100g = NutrientProfile(per100),
                                 isCustom = true,
+                                portions = listOfNotNull(
+                                    portionGrams?.let { Portion(portionName.trim().ifEmpty { "serving" }, it) }
+                                ),
                             )
                         )
                         vm.back()
@@ -108,6 +118,26 @@ fun CustomFoodScreen(vm: AppViewModel, foodId: String?) {
                 unit = "g",
                 onChange = { basisText = it },
                 supporting = "Copy the numbers from the label's “per 100 g” or “per serving” column and enter that weight here.",
+            )
+            Text("Portion size (optional)", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                "Lets you log this food as e.g. “1 bar” or “2 slices” instead of weighing it.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                value = portionName,
+                onValueChange = { portionName = it },
+                label = { Text("Portion name") },
+                placeholder = { Text("e.g. bar, slice, serving") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            NumberField(
+                label = "Weight of one portion",
+                text = portionGramsText,
+                unit = "g",
+                onChange = { portionGramsText = it },
             )
             Text("Nutrition", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
             LABEL_NUTRIENTS.forEach { n ->

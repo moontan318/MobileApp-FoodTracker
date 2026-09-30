@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.mealmacros.app.AppViewModel
 import com.mealmacros.app.HomeTab
 import com.mealmacros.app.Screen
+import com.mealmacros.app.SearchTarget
 import com.mealmacros.core.Food
 import com.mealmacros.core.NutrientProfile
 import com.mealmacros.core.NutritionCalculator
@@ -103,7 +104,11 @@ fun HomeScreen(vm: AppViewModel) {
                     icon = { Icon(Icons.Filled.Add, null) },
                     text = { Text("New food") },
                 )
-                HomeTab.DIARY -> {}
+                HomeTab.DIARY -> ExtendedFloatingActionButton(
+                    onClick = { vm.navigate(Screen.FoodSearch(SearchTarget.DIARY)) },
+                    icon = { Icon(Icons.Filled.Add, null) },
+                    text = { Text("Add food") },
+                )
             }
         },
     ) { padding ->
@@ -159,8 +164,7 @@ private fun RecipeList(vm: AppViewModel) {
 @Composable
 private fun DiaryTab(vm: AppViewModel) {
     val zone = ZoneId.systemDefault()
-    var dayEpoch by rememberSaveable { mutableStateOf(LocalDate.now().toEpochDay()) }
-    val day = LocalDate.ofEpochDay(dayEpoch)
+    val day = LocalDate.ofEpochDay(vm.diaryDay)
     val entries = vm.diary
         .filter { Instant.ofEpochMilli(it.timestamp).atZone(zone).toLocalDate() == day }
         .sortedBy { it.timestamp }
@@ -169,12 +173,12 @@ private fun DiaryTab(vm: AppViewModel) {
     var pendingDelete by rememberSaveable { mutableStateOf<String?>(null) }
 
     LazyColumn(
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 24.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { dayEpoch-- }) {
+                IconButton(onClick = { vm.diaryDay-- }) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Previous day")
                 }
                 Text(
@@ -187,7 +191,7 @@ private fun DiaryTab(vm: AppViewModel) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f),
                 )
-                IconButton(onClick = { dayEpoch++ }) {
+                IconButton(onClick = { vm.diaryDay++ }) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Next day")
                 }
             }
@@ -195,7 +199,8 @@ private fun DiaryTab(vm: AppViewModel) {
         if (entries.isEmpty()) {
             item {
                 Text(
-                    "Nothing logged for this day. Open a recipe, enter how much you ate and tap “Log to diary”.",
+                    "Nothing logged for this day. Tap “Add food” to log a food (by weight or a size such as " +
+                        "“1 medium banana”) or one of your recipes.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(vertical = 24.dp),
@@ -208,7 +213,11 @@ private fun DiaryTab(vm: AppViewModel) {
                         Column(Modifier.weight(1f)) {
                             Text(entry.name, style = MaterialTheme.typography.titleSmall)
                             Text(
-                                "${Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat)} · ${formatGrams(entry.grams)}",
+                                listOfNotNull(
+                                    Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat),
+                                    entry.amountLabel,
+                                    formatGrams(entry.grams),
+                                ).joinToString(" · "),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

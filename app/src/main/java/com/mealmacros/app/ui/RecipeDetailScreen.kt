@@ -113,7 +113,7 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
                         val grams = portionGrams ?: return@Button
                         vm.logPortion(recipe, grams)
                         focus.clearFocus()
-                        scope.launch { snackbar.showSnackbar("Logged ${formatGrams(grams)} of ${recipe.name} to today's diary") }
+                        scope.launch { snackbar.showSnackbar("Logged ${formatGrams(grams)} of ${recipe.name} to ${vm.diaryDayLabel()}") }
                     },
                     enabled = portionGrams != null && portionGrams > 0 && recipe.totalWeight > 0,
                     modifier = Modifier
@@ -121,7 +121,7 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
                         .navigationBarsPadding()
                         .padding(horizontal = 16.dp, vertical = 10.dp),
                 ) {
-                    Text("Log ${portionGrams?.let(::formatGrams) ?: ""} to diary")
+                    Text("Log ${portionGrams?.let(::formatGrams) ?: ""} to diary (${vm.diaryDayLabel()})")
                 }
             }
         },

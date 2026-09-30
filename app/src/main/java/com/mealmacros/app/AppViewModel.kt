@@ -22,15 +22,22 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.UUID
 
 enum class HomeTab { RECIPES, DIARY, FOODS }
+
+/** Where a food picked in the search screen goes. */
+enum class SearchTarget { RECIPE, DIARY }
 
 sealed interface Screen {
     data object Home : Screen
     data class RecipeDetail(val recipeId: String) : Screen
     data object RecipeEditor : Screen
-    data object FoodSearch : Screen
+    data class FoodSearch(val target: SearchTarget) : Screen
     data class CustomFoodEditor(val foodId: String?) : Screen
 }
 
@@ -56,6 +63,9 @@ data class RecipeDraft(
     )
 }
 
+/** An amount of a food chosen by the user; [label] is set for household measures ("1 × medium"). */
+data class Amount(val grams: Double, val label: String? = null)
+
 fun parseNumber(text: String): Double? = text.trim().replace(',', '.').toDoubleOrNull()
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
@@ -74,6 +84,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         private set
 
     var tab by mutableStateOf(HomeTab.RECIPES)
+
+    /** Day shown in the diary; new diary entries are logged to this day. */
+    var diaryDay by mutableStateOf(LocalDate.now().toEpochDay())
     val backStack = mutableStateListOf<Screen>(Screen.Home)
     val screen: Screen get() = backStack.last()
 
@@ -110,7 +123,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         viewModelScope.launch {
             foodDatabase = withContext(Dispatchers.IO) {
-                application.assets.open("usda_sr28.tsv").reader().use { FoodDatabase.parse(it) }
+                val assets = application.assets
+                assets.open("usda_sr28.tsv").reader().use { foods ->
+                    assets.open("usda_portions.tsv").reader().use { portions -> FoodDatabase.parse(foods, portions) }
+                }
             }
         }
     }
@@ -159,8 +175,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         draft = draft?.let(transform)
     }
 
-    fun addIngredient(food: Food, grams: Double) {
-        updateDraft { it.copy(items = it.items + DraftItem(nextDraftKey++, Ingredient.of(food, grams))) }
+    fun addIngredient(food: Food, amount: Amount) {
+        updateDraft { it.copy(items = it.items + DraftItem(nextDraftKey++, Ingredient.of(food, amount.grams))) }
     }
 
     /** Saves the draft and returns the saved recipe id. */
@@ -222,17 +238,46 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // --- Diary ------------------------------------------------------------------------------
 
-    fun logPortion(recipe: Recipe, grams: Double, timestamp: Long = System.currentTimeMillis()) {
+    fun logPortion(recipe: Recipe, grams: Double) {
         val portion = NutritionCalculator.portion(recipe, grams)
         diary = diary + DiaryEntry(
             id = UUID.randomUUID().toString(),
             name = recipe.name,
             grams = grams,
-            timestamp = timestamp,
+            timestamp = diaryTimestamp(),
             nutrients = portion.nutrients,
             recipeId = recipe.id,
         )
         persist()
+    }
+
+    fun logFood(food: Food, amount: Amount) {
+        diary = diary + DiaryEntry(
+            id = UUID.randomUUID().toString(),
+            name = food.name,
+            grams = amount.grams,
+            timestamp = diaryTimestamp(),
+            nutrients = food.nutrientsFor(amount.grams),
+            foodId = food.id,
+            amountLabel = amount.label,
+        )
+        persist()
+    }
+
+    /** Now if the diary is showing today, otherwise midday on the day being viewed. */
+    private fun diaryTimestamp(): Long {
+        val day = LocalDate.ofEpochDay(diaryDay)
+        if (day == LocalDate.now()) return System.currentTimeMillis()
+        return day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    fun diaryDayLabel(): String {
+        val day = LocalDate.ofEpochDay(diaryDay)
+        return when (day) {
+            LocalDate.now() -> "today"
+            LocalDate.now().minusDays(1) -> "yesterday"
+            else -> day.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+        }
     }
 
     fun deleteDiaryEntry(id: String) {

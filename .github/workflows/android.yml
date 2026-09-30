@@ -38,7 +38,7 @@ jobs:
       # Every push to main publishes a GitHub release so the APK can be downloaded
       # straight onto a phone from the repository's Releases page.
       - name: Publish release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}

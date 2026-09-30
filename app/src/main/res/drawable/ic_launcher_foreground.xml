@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A plate with a macro "pie" on it (108dp canvas, content kept inside the 66dp safe zone). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- plate -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,26a28,28 0,1 1,0 56a28,28 0,1 1,0 -56z" />
+    <path
+        android:fillColor="#E8F5E9"
+        android:pathData="M54,33a21,21 0,1 1,0 42a21,21 0,1 1,0 -42z" />
+    <!-- protein slice (top right quarter) -->
+    <path
+        android:fillColor="#C62828"
+        android:pathData="M54,54 L54,37 A17,17 0,0 1,71 54 Z" />
+    <!-- carb slice (bottom half) -->
+    <path
+        android:fillColor="#F9A825"
+        android:pathData="M54,54 L71,54 A17,17 0,0 1,37 54 Z" />
+    <!-- fat slice (top left quarter) -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M54,54 L37,54 A17,17 0,0 1,54 37 Z" />
+</vector>

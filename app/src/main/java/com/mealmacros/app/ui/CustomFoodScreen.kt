@@ -150,7 +150,11 @@ private fun NumberField(label: String, text: String, unit: String, onChange: (St
         singleLine = true,
         isError = text.isNotBlank() && parseNumber(text) == null,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        supportingText = supporting?.let { { Text(it) } },
+        supportingText = if (supporting != null) {
+            { Text(supporting) }
+        } else {
+            null
+        },
         modifier = Modifier.fillMaxWidth(),
     )
 }

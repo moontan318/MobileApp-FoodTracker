@@ -39,6 +39,8 @@ import com.mealmacros.core.Portion
  * household measures (e.g. 1 × "medium" banana = 118 g).
  *
  * [preferPortion] pre-selects a typical whole item (such as "medium") when the food has one.
+ * Foods whose weight isn't published can only be added as items, and only when
+ * [allowUnknownWeight] (recipes need real weights).
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -46,11 +48,15 @@ fun AmountDialog(
     food: Food,
     confirmLabel: String,
     preferPortion: Boolean,
+    allowUnknownWeight: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (Amount) -> Unit,
 ) {
     // null = grams
-    var portion by remember { mutableStateOf(if (preferPortion) food.defaultPortion() else null) }
+    var portion by remember {
+        mutableStateOf(if (preferPortion || !food.weightKnown) food.defaultPortion() else null)
+    }
+    val blocked = !food.weightKnown && !allowUnknownWeight
     var gramsText by remember { mutableStateOf("") }
     var quantityText by remember { mutableStateOf("1") }
     val focusRequester = remember { FocusRequester() }
@@ -74,11 +80,13 @@ fun AmountDialog(
                 if (food.portions.isNotEmpty()) {
                     Text("Measure", style = MaterialTheme.typography.labelLarge)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(
-                            selected = portion == null,
-                            onClick = { portion = null },
-                            label = { Text("grams") },
-                        )
+                        if (food.weightKnown) {
+                            FilterChip(
+                                selected = portion == null,
+                                onClick = { portion = null },
+                                label = { Text("grams") },
+                            )
+                        }
                         food.portions.forEach { p ->
                             FilterChip(
                                 selected = portion == p,
@@ -115,18 +123,32 @@ fun AmountDialog(
                             .padding(top = 8.dp),
                     )
                 }
-                if (amount != null) {
-                    val nutrients = food.nutrientsFor(amount.grams)
+                if (blocked) {
                     Text(
-                        "= ${formatGrams(amount.grams)}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        "${food.source} doesn't publish the weight of this item, so it can be logged to " +
+                            "your diary but not used as a recipe ingredient.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(top = 8.dp),
                     )
-                    Text(macroSummary(nutrients), style = MaterialTheme.typography.bodyMedium)
+                } else if (amount != null) {
+                    val nutrients = food.nutrientsFor(amount.grams)
+                    if (food.weightKnown) {
+                        Text(
+                            "= ${formatGrams(amount.grams)}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
+                    }
+                    Text(
+                        macroSummary(nutrients),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
                 } else {
                     Text(
-                        "Per 100 g: ${macroSummary(food.per100g)}",
+                        (if (food.weightKnown) "Per 100 g: " else "Per item: ") + macroSummary(food.per100g),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 8.dp),
                     )
@@ -141,7 +163,7 @@ fun AmountDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = amount != null, onClick = { amount?.let(onConfirm) }) { Text(confirmLabel) }
+            TextButton(enabled = amount != null && !blocked, onClick = { amount?.let(onConfirm) }) { Text(confirmLabel) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
     )

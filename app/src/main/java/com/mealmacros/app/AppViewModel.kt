@@ -255,7 +255,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         diary = diary + DiaryEntry(
             id = UUID.randomUUID().toString(),
             name = food.name,
-            grams = amount.grams,
+            grams = if (food.weightKnown) amount.grams else 0.0, // 0 = weight not published
             timestamp = diaryTimestamp(),
             nutrients = food.nutrientsFor(amount.grams),
             foodId = food.id,

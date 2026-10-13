@@ -216,7 +216,7 @@ private fun DiaryTab(vm: AppViewModel) {
                                 listOfNotNull(
                                     Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat),
                                     entry.amountLabel,
-                                    formatGrams(entry.grams),
+                                    entry.grams.takeIf { it > 0 }?.let(::formatGrams),
                                 ).joinToString(" · "),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -300,7 +300,11 @@ fun FoodCard(food: Food, onClick: () -> Unit, trailing: @Composable () -> Unit =
                 }
                 val item = food.defaultPortion()?.takeIf { it.description == "item" }
                 Text(
-                    if (item != null) "$group · per item (${formatGrams(item.grams)})" else "$group · per 100 g",
+                    when {
+                        !food.weightKnown -> "$group · per item"
+                        item != null -> "$group · per item (${formatGrams(item.grams)})"
+                        else -> "$group · per 100 g"
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (food.isCustom) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )

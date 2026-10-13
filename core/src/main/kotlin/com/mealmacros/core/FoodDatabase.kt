@@ -7,8 +7,9 @@ import java.io.Reader
  * The bundled food database plus search. Built by tools/build_food_db.py from UK CoFID,
  * USDA SR28 and restaurant menus.
  *
- * Food file: tab separated with a header row of `id, name, group, source, common` followed
- * by nutrient keys; values are per 100 g, empty = unknown.
+ * Food file: tab separated with a header row of `id, name, group, source, common, per`
+ * followed by nutrient keys; values are per 100 g (or per item when `per` is "item", see
+ * [Food.weightKnown]), empty = unknown.
  * Portion file: tab separated `id, description, grams` (grams for one unit).
  */
 class FoodDatabase(val foods: List<Food>) {
@@ -37,6 +38,7 @@ class FoodDatabase(val foods: List<Food>) {
             val groupCol = column("group")
             val sourceCol = column("source")
             val commonCol = column("common")
+            val perCol = column("per")
             val nutrientCols = header.mapIndexedNotNull { i, key -> Nutrient.fromKey(key)?.let { i to it } }
             val foods = ArrayList<Food>(10_500)
             for (line in lines) {
@@ -55,6 +57,7 @@ class FoodDatabase(val foods: List<Food>) {
                     commonName = if (commonCol >= 0) f.getOrElse(commonCol) { "" } else "",
                     per100g = NutrientProfile(values),
                     portions = portions[id] ?: emptyList(),
+                    weightKnown = perCol < 0 || f.getOrNull(perCol) != "item",
                 )
             }
             return FoodDatabase(foods)

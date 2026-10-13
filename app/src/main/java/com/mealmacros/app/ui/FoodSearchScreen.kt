@@ -171,6 +171,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             food = food,
             confirmLabel = if (forDiary) "Log" else "Add",
             preferPortion = forDiary,
+            allowUnknownWeight = forDiary,
             onDismiss = { selected = null },
             onConfirm = { amount ->
                 selected = null

@@ -273,8 +273,22 @@ def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
-def restaurant_food(fid, name, source, values):
-    return {"id": fid, "name": name, "group": RESTAURANT_GROUP, "source": source, "common": "", "values": values}
+def restaurant_food(fid, name, source, values, per="100g"):
+    """per="item": the chain doesn't publish weights, so values are per item."""
+    return {"id": fid, "name": name, "group": RESTAURANT_GROUP, "source": source, "common": "",
+            "values": values, "per": per}
+
+
+def item_values(label):
+    """Label values for one item, kept per item (for chains that don't publish weights)."""
+    return label_values(label, 100.0)  # weight 100 leaves the numbers unchanged
+
+
+def has_raw(name):
+    if (SRC / "raw" / name).exists():
+        return True
+    print(f"warning: tools/sources/raw/{name} missing, skipped")
+    return False
 
 
 def load_greggs():
@@ -378,6 +392,71 @@ def load_leon():
     return foods, portions
 
 
+def load_popeyes():
+    foods, portions, seen = [], {}, set()
+    if not has_raw("popeyes.json.gz"):
+        return foods, portions
+    for r in json.loads(raw("popeyes.json.gz"))["data"]:
+        n = r.get("nutrition") or {}
+        name = " ".join(r["name"].split())
+        if n.get("kcal") is None or name.lower() in seen or "ireland only" in name.lower():
+            continue
+        seen.add(name.lower())
+        fid = f"popeyes:{r['id']}"
+        foods.append(restaurant_food(fid, f"Popeyes {name}", "Popeyes", item_values({
+            "kcal": n.get("kcal"), "fat": n.get("fats"), "saturates": n.get("saturated_fats"),
+            "carbs": n.get("carbohydrates"), "sugars": n.get("sugar"), "fibre": n.get("fibre"),
+            "protein": n.get("protein"), "salt": n.get("salt"),
+        }), per="item"))
+        portions[fid] = [("item", 100.0)]
+    return foods, portions
+
+
+def nandos_values(facts):
+    mg = lambda k: None if facts.get(k) is None else facts[k] / 1000.0  # noqa: E731 - values are in mg
+    return item_values({
+        "kcal": facts.get("energyKcal"), "fat": mg("fatMg"), "saturates": mg("saturatesMg"),
+        "carbs": mg("totalCarbsMg"), "sugars": mg("sugarsMg"), "fibre": mg("fibreMg"),
+        "protein": mg("proteinMg"), "salt": mg("saltMg"),
+    })
+
+
+def load_nandos():
+    foods, portions, seen = [], {}, set()
+    if not has_raw("nandos.json.gz"):
+        return foods, portions
+    menu = json.loads(raw("nandos.json.gz"))["result"]["data"]["nandos"]["menu"]
+
+    def add(name, facts, size=None):
+        name = " ".join(name.split())
+        full = f"{name} ({size})" if size else name
+        if full.lower() in seen or facts.get("energyKcal") is None:
+            return
+        seen.add(full.lower())
+        fid = f"nandos:{slug(full)}"
+        foods.append(restaurant_food(fid, f"Nando's {full}", "Nando's", nandos_values(facts), per="item"))
+        portions[fid] = [("item", 100.0)]
+
+    for section in menu["sections"]:
+        for item in section["items"]:
+            facts = (item.get("nutritionalInfo") or {}).get("factsForPortionSizes") or []
+            sizes = None
+            if len(facts) > 1:  # e.g. Regular / Large: size names come from the item's options
+                for m in item.get("modifiers") or []:
+                    names = [o.get("displayName") for o in m.get("options") or []]
+                    if len(names) == len(facts) and all(names):
+                        sizes = names
+                        break
+            for i, f in enumerate(facts):
+                add(item["displayName"], f, sizes[i] if sizes else (None if len(facts) == 1 else f"size {i + 1}"))
+            for m in item.get("modifiers") or []:  # sides, dips and extras offered with the dish
+                for o in m.get("options") or []:
+                    of = (o.get("nutritionalInfo") or {}).get("factsForPortionSizes") or []
+                    if len(of) == 1 and o.get("displayName"):
+                        add(o["displayName"], of[0])
+    return foods, portions
+
+
 # --------------------------------------------------------------------------------------------
 
 def main():
@@ -386,7 +465,7 @@ def main():
     usda = load_usda()
     portions = {f"usda:{k}": v for k, v in usda_portions.items()}
     restaurants = []
-    for loader in (load_greggs, load_costa, load_leon):
+    for loader in (load_greggs, load_costa, load_leon, load_popeyes, load_nandos):
         foods, p = loader()
         restaurants += foods
         portions.update(p)
@@ -407,9 +486,9 @@ def main():
     assert not dupes, f"duplicate ids: {sorted(dupes)[:10]}"
 
     with open(ASSETS / "foods.tsv", "w", encoding="utf-8", newline="") as out:
-        out.write("\t".join(["id", "name", "group", "source", "common"] + NUTRIENTS) + "\n")
+        out.write("\t".join(["id", "name", "group", "source", "common", "per"] + NUTRIENTS) + "\n")
         for f in foods:
-            cells = [f["id"], f["name"], f["group"], f["source"], f["common"]]
+            cells = [f["id"], f["name"], f["group"], f["source"], f["common"], f.get("per", "100g")]
             cells += [fmt(f["values"].get(k)) for k in NUTRIENTS]
             out.write("\t".join(" ".join(c.split()) if c else "" for c in cells) + "\n")
     count = 0

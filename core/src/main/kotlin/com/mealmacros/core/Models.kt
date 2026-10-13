@@ -1,5 +1,8 @@
 package com.mealmacros.core
 
+/** Nominal weight of one item for foods whose real weight isn't known (see [Food.weightKnown]). */
+const val PER_ITEM_GRAMS = 100.0
+
 /** A household measure, e.g. "medium (7" to 7-7/8" long)" = 118 g for one banana. */
 data class Portion(val description: String, val grams: Double)
 
@@ -14,6 +17,11 @@ data class Food(
     val portions: List<Portion> = emptyList(),
     /** Where the data comes from: "UK" (CoFID), "US" (USDA) or a restaurant name. */
     val source: String = "",
+    /**
+     * False for restaurant items whose weight isn't published: their nutrients are per item,
+     * stored as if one item weighed [PER_ITEM_GRAMS], and they can only be logged as items.
+     */
+    val weightKnown: Boolean = true,
 ) {
     fun nutrientsFor(grams: Double): NutrientProfile = per100g * (grams / 100.0)
 

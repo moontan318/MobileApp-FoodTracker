@@ -186,7 +186,7 @@ fun NutritionFootnote(showIncomplete: Boolean) {
         add("– no data available.")
         add(
             "Food data: McCance and Widdowson's Composition of Foods Integrated Dataset (UK, Open Government " +
-                "Licence), USDA SR28, and nutrition published by Greggs, Costa and LEON."
+                "Licence), USDA SR28, and nutrition published by the restaurant chains."
         )
     }
     Text(

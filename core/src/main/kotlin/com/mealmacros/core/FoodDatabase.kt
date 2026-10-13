@@ -7,8 +7,9 @@ import java.io.Reader
  * The bundled food database plus search. Built by tools/build_food_db.py from UK CoFID,
  * USDA SR28 and restaurant menus.
  *
- * Food file: tab separated with a header row of `id, name, group, source, common` followed
- * by nutrient keys; values are per 100 g, empty = unknown.
+ * Food file: tab separated with a header row of `id, name, group, source, common, per`
+ * followed by nutrient keys; values are per 100 g (or per item when `per` is "item", see
+ * [Food.weightKnown]), empty = unknown.
  * Portion file: tab separated `id, description, grams` (grams for one unit).
  */
 class FoodDatabase(val foods: List<Food>) {
@@ -37,6 +38,7 @@ class FoodDatabase(val foods: List<Food>) {
             val groupCol = column("group")
             val sourceCol = column("source")
             val commonCol = column("common")
+            val perCol = column("per")
             val nutrientCols = header.mapIndexedNotNull { i, key -> Nutrient.fromKey(key)?.let { i to it } }
             val foods = ArrayList<Food>(10_500)
             for (line in lines) {
@@ -55,6 +57,7 @@ class FoodDatabase(val foods: List<Food>) {
                     commonName = if (commonCol >= 0) f.getOrElse(commonCol) { "" } else "",
                     per100g = NutrientProfile(values),
                     portions = portions[id] ?: emptyList(),
+                    weightKnown = perCol < 0 || f.getOrNull(perCol) != "item",
                 )
             }
             return FoodDatabase(foods)
@@ -70,7 +73,15 @@ class FoodDatabase(val foods: List<Food>) {
             return result
         }
 
-        fun normalize(s: String): String = s.lowercase().replace(Regex("[^a-z0-9%]+"), " ").trim()
+        /** Lower-case words only; "McDonald's" -> "mcdonalds", "B.M.T" -> "bmt". */
+        fun normalize(s: String): String = s.lowercase()
+            .replace(APOSTROPHES_AND_ABBREVIATION_DOTS, "")
+            .replace(NON_WORD, " ")
+            .trim()
+
+        private val APOSTROPHES_AND_ABBREVIATION_DOTS = Regex("['’]|(?<=[a-z])\\.(?=[a-z])")
+        private val NON_WORD = Regex("[^a-z0-9%]+")
+        private val ES_PLURAL = Regex("..(oes|ches|shes|sses|xes)$")
 
         /** Search helper shared with custom foods. */
         fun rank(foods: List<Food>, query: String, limit: Int = 60): List<Food> =
@@ -120,7 +131,7 @@ class FoodDatabase(val foods: List<Food>) {
 
         private fun variants(token: String): List<String> {
             val list = mutableListOf(token)
-            if (token.length > 4 && token.endsWith("es")) list += token.dropLast(2)
+            if (ES_PLURAL.containsMatchIn(token)) list += token.dropLast(2) // potatoes, peaches, boxes
             if (token.length > 3 && token.endsWith("s")) list += token.dropLast(1)
             for (t in list.toList()) SYNONYMS[t]?.let { list += it }
             return list.distinct()

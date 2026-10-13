@@ -6,7 +6,10 @@ Sources (all under tools/sources/; cofid/ and raw/ are refreshed by tools/fetch_
           Government Licence v3.0). The primary database, with UK food names.
   usda/   USDA SR28 (public domain), from tools/convert_sr28.py. Renamed to UK wording;
           US-branded and US-restaurant items are dropped.
-  raw/    Menu nutrition published by Greggs, Costa and LEON on their own websites.
+  raw/    Menu nutrition published by restaurant chains on their own websites (Greggs, Costa,
+          LEON, McDonald's, KFC, Burger King, Subway, Nando's, Popeyes).
+
+Requires pdfplumber (pip install pdfplumber) for the KFC and Subway PDFs.
 
 Usage: python3 -I tools/build_food_db.py
 """
@@ -273,8 +276,24 @@ def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
-def restaurant_food(fid, name, source, values):
-    return {"id": fid, "name": name, "group": RESTAURANT_GROUP, "source": source, "common": "", "values": values}
+def restaurant_food(fid, name, source, values, per="100g"):
+    """per="item": the chain doesn't publish weights, so values are per item."""
+    # "McDonald's McDonald's Fries" -> "McDonald's Fries"
+    name = re.sub(rf"^{re.escape(source)}\s+(?={re.escape(source)}\b)", "", name, flags=re.IGNORECASE)
+    return {"id": fid, "name": name, "group": RESTAURANT_GROUP, "source": source, "common": "",
+            "values": values, "per": per}
+
+
+def item_values(label):
+    """Label values for one item, kept per item (for chains that don't publish weights)."""
+    return label_values(label, 100.0)  # weight 100 leaves the numbers unchanged
+
+
+def has_raw(name):
+    if (SRC / "raw" / name).exists():
+        return True
+    print(f"warning: tools/sources/raw/{name} missing, skipped")
+    return False
 
 
 def load_greggs():
@@ -378,6 +397,222 @@ def load_leon():
     return foods, portions
 
 
+def load_popeyes():
+    foods, portions, seen = [], {}, set()
+    if not has_raw("popeyes.json.gz"):
+        return foods, portions
+    for r in json.loads(raw("popeyes.json.gz"))["data"]:
+        n = r.get("nutrition") or {}
+        name = " ".join(r["name"].split())
+        if n.get("kcal") is None or name.lower() in seen or "ireland only" in name.lower():
+            continue
+        seen.add(name.lower())
+        fid = f"popeyes:{r['id']}"
+        foods.append(restaurant_food(fid, f"Popeyes {name}", "Popeyes", item_values({
+            "kcal": n.get("kcal"), "fat": n.get("fats"), "saturates": n.get("saturated_fats"),
+            "carbs": n.get("carbohydrates"), "sugars": n.get("sugar"), "fibre": n.get("fibre"),
+            "protein": n.get("protein"), "salt": n.get("salt"),
+        }), per="item"))
+        portions[fid] = [("item", 100.0)]
+    return foods, portions
+
+
+def nandos_values(facts):
+    mg = lambda k: None if facts.get(k) is None else facts[k] / 1000.0  # noqa: E731 - values are in mg
+    return item_values({
+        "kcal": facts.get("energyKcal"), "fat": mg("fatMg"), "saturates": mg("saturatesMg"),
+        "carbs": mg("totalCarbsMg"), "sugars": mg("sugarsMg"), "fibre": mg("fibreMg"),
+        "protein": mg("proteinMg"), "salt": mg("saltMg"),
+    })
+
+
+def load_nandos():
+    foods, portions, seen = [], {}, set()
+    if not has_raw("nandos.json.gz"):
+        return foods, portions
+    menu = json.loads(raw("nandos.json.gz"))["result"]["data"]["nandos"]["menu"]
+
+    def add(name, facts, size=None):
+        name = " ".join(name.split())
+        full = f"{name} ({size})" if size else name
+        if slug(full) in seen or facts.get("energyKcal") is None:
+            return
+        seen.add(slug(full))
+        fid = f"nandos:{slug(full)}"
+        foods.append(restaurant_food(fid, f"Nando's {full}", "Nando's", nandos_values(facts), per="item"))
+        portions[fid] = [("item", 100.0)]
+
+    for section in menu["sections"]:
+        for item in section["items"]:
+            facts = (item.get("nutritionalInfo") or {}).get("factsForPortionSizes") or []
+            sizes = None
+            if len(facts) > 1:  # e.g. Regular / Large: size names come from the item's options
+                for m in item.get("modifiers") or []:
+                    names = [o.get("displayName") for o in m.get("options") or []]
+                    if len(names) == len(facts) and all(names):
+                        sizes = names
+                        break
+            for i, f in enumerate(facts):
+                add(item["displayName"], f, sizes[i] if sizes else (None if len(facts) == 1 else f"size {i + 1}"))
+            for m in item.get("modifiers") or []:  # sides, dips and extras offered with the dish
+                for o in m.get("options") or []:
+                    of = (o.get("nutritionalInfo") or {}).get("factsForPortionSizes") or []
+                    if len(of) == 1 and o.get("displayName"):
+                        add(o["displayName"], of[0])
+    return foods, portions
+
+
+def pdf_tables(name):
+    import io
+    import pdfplumber  # pip install pdfplumber
+    with pdfplumber.open(io.BytesIO(gzip.decompress((SRC / "raw" / name).read_bytes()))) as pdf:
+        return [t for page in pdf.pages for t in page.extract_tables()]
+
+
+def number(text):
+    text = (text or "").strip().lstrip("<")
+    return float(text) if re.fullmatch(r"\d+(\.\d+)?", text) else None
+
+
+def clean_name(text):
+    text = " ".join((text or "").replace("®", "").replace("™", "").replace("©", "").split())
+    return re.sub(r"\s*[*∆~†◆#]+$", "", text).strip()
+
+
+def load_kfc():
+    """KFC's allergen & nutrition PDF: two side-by-side tables per page, values per item."""
+    foods, portions, seen = [], {}, set()
+    if not has_raw("kfc_nutrition.pdf.gz"):
+        return foods, portions
+    for table in pdf_tables("kfc_nutrition.pdf.gz"):
+        for row in table:
+            for half in (row[:13], row[13:26]):
+                if len(half) < 13:
+                    continue
+                name = clean_name(half[0])
+                kj, kcal, fat, sat, carbs, sugars, protein, salt = (number(x) for x in half[3:11])
+                if not name or kcal is None or slug(name) in seen:
+                    continue  # blank cell, header row or duplicate
+                seen.add(slug(name))
+                fid = f"kfc:{slug(name)}"
+                foods.append(restaurant_food(fid, f"KFC {name}", "KFC", item_values({
+                    "kcal": kcal, "fat": fat, "saturates": sat, "carbs": carbs, "sugars": sugars,
+                    "protein": protein, "salt": salt}), per="item"))
+                portions[fid] = [("item", 100.0)]
+    return foods, portions
+
+
+SUBWAY_SECTIONS = {  # section -> (name suffix, portions)
+    "Subs": (" Sub", [("6-inch", 1), ("footlong", 2)]),
+    "Saver Subs": (" Sub", [("6-inch", 1), ("footlong", 2)]),
+    "Toasties": (" Toastie", None), "Wraps": (" Wrap", None), "Salads": (" Salad", None),
+    "Spuds": (" Spud", None), "Protein Pots": (" Protein Pot", None),
+}
+
+
+def load_subway():
+    """Subway's UK nutrition PDF: serving size (g), per serving and per 100 g values."""
+    foods, portions, seen = [], {}, set()
+    if not has_raw("subway_nutrition.pdf.gz"):
+        return foods, portions
+    for table in pdf_tables("subway_nutrition.pdf.gz"):
+        section = None
+        for row in table:
+            name = clean_name(row[0])
+            values = [number(x) for x in row[1:11]]
+            if not name:
+                continue
+            if all(v is None for v in values):
+                section = name  # a section heading such as "Subs" or "SAUCES & CONDIMENTS"
+                continue
+            size, _kj, kcal, fat, sat, carbs, sugars, fibre, protein, salt = values
+            if not size or kcal is None:
+                continue
+            suffix, sizes = SUBWAY_SECTIONS.get(section, (None, None))
+            if suffix is None:  # sides, cookies, breads, fillings, sauces...
+                full = name if section in ("Sides", "Cookies", "DUNK POTS") else f"{name} ({(section or '').lower()})"
+            else:
+                full = name + suffix
+            if slug(full) in seen:
+                continue
+            seen.add(slug(full))
+            fid = f"subway:{slug(full)}"
+            foods.append(restaurant_food(fid, f"Subway {full}", "Subway", label_values({
+                "kcal": kcal, "fat": fat, "saturates": sat, "carbs": carbs, "sugars": sugars,
+                "fibre": fibre, "protein": protein, "salt": salt}, size)))
+            portions[fid] = [(d, size * m) for d, m in sizes] if sizes else [("item", size)]
+    return foods, portions
+
+
+BK_SKIP = re.compile(r"(?i)\btest\b|usa|tik ?tok|foyle|no meat|patty|condiment|\bpack\b|^\d+-pack|\bw/")
+
+
+def load_burgerking():
+    foods, portions, best = [], {}, {}
+    if not has_raw("burgerking.json.gz"):
+        return foods, portions
+    for item in json.loads(raw("burgerking.json.gz"))["result"]:
+        n = item.get("name")
+        name = clean_name(n.get("en") if isinstance(n, dict) else n)
+        name = re.sub(r"^[a-z]{1,3}(?=[A-Z0-9])", "", name)  # stray internal prefixes ("fsLarge...")
+        nut = item.get("nutrition") or {}
+        if len(name) < 3 or nut.get("calories") is None or BK_SKIP.search(name):
+            continue
+        if not nut.get("weight") and not item.get("sections"):
+            continue  # weightless items outside the current menu are till codes and old/US items
+        key = slug(name)
+        if key not in best or (nut.get("weight") and not best[key][1].get("weight")):
+            best[key] = (name, nut)
+    for name, nut in best.values():
+        fid = f"burgerking:{slug(name)}"
+        label = {"kcal": nut.get("calories"), "fat": nut.get("fat"), "saturates": nut.get("saturatedFat"),
+                 "carbs": nut.get("carbohydrates"), "sugars": nut.get("sugar"), "fibre": nut.get("fiber"),
+                 "protein": nut.get("proteins"), "salt": nut.get("salt")}
+        weight = nut.get("weight")
+        if weight:
+            foods.append(restaurant_food(fid, f"Burger King {name}", "Burger King", label_values(label, weight)))
+            portions[fid] = [("item", weight)]
+        else:
+            foods.append(restaurant_food(fid, f"Burger King {name}", "Burger King", item_values(label), per="item"))
+            portions[fid] = [("item", 100.0)]
+    return foods, portions
+
+
+MCD_NUTRIENTS = {"energy_kcal": "kcal", "fat": "fat", "saturated_fat": "saturates", "carbohydrate": "carbs",
+                 "sugars": "sugars", "fibre": "fibre", "fiber": "fibre", "protein": "protein", "salt": "salt"}
+
+
+def load_mcdonalds():
+    """McDonald's item details: per-item values plus per-100 g ("hundred_g_per_product")."""
+    foods, portions, seen = [], {}, set()
+    if not has_raw("mcdonalds.json.gz"):
+        return foods, portions
+    for item in json.loads(raw("mcdonalds.json.gz")):
+        name = clean_name(item.get("item_marketing_name") or item.get("item_name"))
+        nutrients = ((item.get("nutrient_facts") or {}).get("nutrient")) or []
+        if isinstance(nutrients, dict):
+            nutrients = [nutrients]
+        per_item, per100 = {}, {}
+        for n in nutrients:
+            key = MCD_NUTRIENTS.get(n.get("nutrient_name_id"))
+            if key:
+                per_item[key] = number(str(n.get("value")))
+                per100[key] = number(str(n.get("hundred_g_per_product")))
+        if not name or per_item.get("kcal") is None or name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        fid = f"mcdonalds:{item.get('item_id') or slug(name)}"
+        kcal, kcal100 = per_item["kcal"], per100.get("kcal")
+        if kcal100:  # weight = per item / per 100 g
+            weight = kcal / kcal100 * 100.0
+            foods.append(restaurant_food(fid, f"McDonald's {name}", "McDonald's", label_values(per_item, weight)))
+            portions[fid] = [("item", round(weight, 1))]
+        else:
+            foods.append(restaurant_food(fid, f"McDonald's {name}", "McDonald's", item_values(per_item), per="item"))
+            portions[fid] = [("item", 100.0)]
+    return foods, portions
+
+
 # --------------------------------------------------------------------------------------------
 
 def main():
@@ -386,7 +621,8 @@ def main():
     usda = load_usda()
     portions = {f"usda:{k}": v for k, v in usda_portions.items()}
     restaurants = []
-    for loader in (load_greggs, load_costa, load_leon):
+    for loader in (load_greggs, load_costa, load_leon, load_mcdonalds, load_kfc, load_burgerking, load_subway,
+                   load_nandos, load_popeyes):
         foods, p = loader()
         restaurants += foods
         portions.update(p)
@@ -407,9 +643,9 @@ def main():
     assert not dupes, f"duplicate ids: {sorted(dupes)[:10]}"
 
     with open(ASSETS / "foods.tsv", "w", encoding="utf-8", newline="") as out:
-        out.write("\t".join(["id", "name", "group", "source", "common"] + NUTRIENTS) + "\n")
+        out.write("\t".join(["id", "name", "group", "source", "common", "per"] + NUTRIENTS) + "\n")
         for f in foods:
-            cells = [f["id"], f["name"], f["group"], f["source"], f["common"]]
+            cells = [f["id"], f["name"], f["group"], f["source"], f["common"], f.get("per", "100g")]
             cells += [fmt(f["values"].get(k)) for k in NUTRIENTS]
             out.write("\t".join(" ".join(c.split()) if c else "" for c in cells) + "\n")
     count = 0

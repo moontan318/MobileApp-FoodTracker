@@ -90,7 +90,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text(if (forDiary) "Search foods, e.g. banana, Greggs, latte" else "Search foods, e.g. potatoes raw") },
+                placeholder = { Text(if (forDiary) "Search foods, e.g. banana, Big Mac, Zinger" else "Search foods, e.g. potatoes raw") },
                 leadingIcon = { Icon(Icons.Filled.Search, null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) IconButton(onClick = { query = "" }) { Icon(Icons.Filled.Clear, "Clear") }
@@ -171,6 +171,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             food = food,
             confirmLabel = if (forDiary) "Log" else "Add",
             preferPortion = forDiary,
+            allowUnknownWeight = forDiary,
             onDismiss = { selected = null },
             onConfirm = { amount ->
                 selected = null

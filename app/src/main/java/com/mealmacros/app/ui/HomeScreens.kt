@@ -216,7 +216,7 @@ private fun DiaryTab(vm: AppViewModel) {
                                 listOfNotNull(
                                     Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat),
                                     entry.amountLabel,
-                                    formatGrams(entry.grams),
+                                    entry.grams.takeIf { it > 0 }?.let(::formatGrams),
                                 ).joinToString(" · "),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -254,8 +254,9 @@ private fun CustomFoodList(vm: AppViewModel) {
     if (foods.isEmpty()) {
         EmptyState(
             "No custom foods",
-            "The built-in database has over 10,000 foods, including UK foods, takeaways and Greggs, Costa and " +
-                "LEON menus. For anything else (e.g. a supermarket product) tap " +
+            "The built-in database has over 11,000 foods, including UK foods, takeaways and the menus of " +
+                "McDonald's, KFC, Burger King, Subway, Nando's, Popeyes, Greggs, Costa and LEON. For anything " +
+                "else (e.g. a supermarket product) tap " +
                 "“New food” and copy the values from its nutrition label.",
         )
         return
@@ -298,9 +299,14 @@ fun FoodCard(food: Food, onClick: () -> Unit, trailing: @Composable () -> Unit =
                     food.source == "UK" || food.source == "US" -> "${food.source} · ${food.group}"
                     else -> food.source
                 }
-                val item = food.defaultPortion()?.takeIf { it.description == "item" }
+                // Restaurant items are shown per serving (item, 6-inch sub, medium drink...).
+                val item = food.defaultPortion()?.takeIf { food.isRestaurant }
                 Text(
-                    if (item != null) "$group · per item (${formatGrams(item.grams)})" else "$group · per 100 g",
+                    when {
+                        !food.weightKnown -> "$group · per item"
+                        item != null -> "$group · per ${item.description} (${formatGrams(item.grams)})"
+                        else -> "$group · per 100 g"
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (food.isCustom) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )

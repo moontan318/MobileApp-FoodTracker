@@ -1,0 +1,33 @@
+name: Probe restaurant data
+
+# Temporary: investigates which UK chains publish usable nutrition data (see
+# tools/probe/probe_restaurants.py) and commits what it finds to the branch.
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - tools/probe/probe_restaurants.py
+      - .github/workflows/probe-restaurants.yml
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - run: python -I tools/probe/probe_restaurants.py
+      - name: Commit findings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add tools/probe/out
+          git diff --cached --quiet && exit 0
+          git commit -m "Restaurant probe results"
+          git push

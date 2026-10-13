@@ -1,0 +1,6 @@
+https://wimpy.uk.com/menu/
+status=404 html=24600 kcal_in_html=0
+  
+
+== responses
+resp000.js	538106	200	https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0OQ.js

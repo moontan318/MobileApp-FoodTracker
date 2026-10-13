@@ -1,0 +1,6 @@
+https://www.germandonerkebab.com/uk/menu/
+status=200 html=216923 kcal_in_html=0
+  https://gdk.com/us/allergen-information
+
+== responses
+

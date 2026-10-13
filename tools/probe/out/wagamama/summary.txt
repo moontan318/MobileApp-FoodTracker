@@ -1,0 +1,11 @@
+https://www.wagamama.com/menu
+status=200 html=1005860 kcal_in_html=12
+  https://www.wagamama.com/_nuxt/NutritionalAllergensInfo.ClitPMfY.css
+
+== responses
+resp000.js	531878	200	https://www.wagamama.com/_nuxt/D3FG2GXs.js
+resp001.js	531878	200	https://www.wagamama.com/_nuxt/D3FG2GXs.js
+resp002.js	2811	200	https://www.wagamama.com/_nuxt/C3F9pGxg.js
+resp003.js	21665	200	https://www.wagamama.com/_nuxt/BTAKTSbN.js
+resp004.js	4054	200	https://www.wagamama.com/_nuxt/H6MRUr3k.js
+resp005.js	4839	200	https://www.wagamama.com/_nuxt/M6peI2F1.js

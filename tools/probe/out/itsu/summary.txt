@@ -1,0 +1,6 @@
+https://www.itsu.com/menu/
+status=200 html=576270 kcal_in_html=138
+  https://itsu-production-assets.s3.eu-west-2.amazonaws.com/Korean_spicy_stir_fry_style_udon_noodles_website_product_no_allergen_5a98db630f.png
+
+== responses
+resp000.js	53459	200	https://www.itsu.com/_nuxt/56ac3ae.modern.js

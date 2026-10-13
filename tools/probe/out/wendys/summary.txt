@@ -1,0 +1,14 @@
+https://www.wendys.co.uk/menu
+ERROR Error: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.wendys.co.uk/menu
+Call log:
+  - navigating to "https://www.wendys.co.uk/menu", waiting until "domcontentloaded"
+
+
+https://www.wendys.co.uk/nutrition
+ERROR Error: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.wendys.co.uk/nutrition
+Call log:
+  - navigating to "https://www.wendys.co.uk/nutrition", waiting until "domcontentloaded"
+
+
+== responses
+

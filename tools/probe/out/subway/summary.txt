@@ -1,0 +1,14 @@
+https://www.subway.com/en-GB/MenuNutrition/Nutrition
+ERROR Error: Page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.subway.com/en-GB/MenuNutrition/Nutrition
+Call log:
+  - navigating to "https://www.subway.com/en-GB/MenuNutrition/Nutrition", waiting until "domcontentloaded"
+
+
+https://www.subway.com/en-GB/MenuNutrition/Menu
+ERROR Error: Page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.subway.com/en-GB/MenuNutrition/Menu
+Call log:
+  - navigating to "https://www.subway.com/en-GB/MenuNutrition/Menu", waiting until "domcontentloaded"
+
+
+== responses
+

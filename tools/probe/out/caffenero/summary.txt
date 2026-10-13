@@ -1,0 +1,7 @@
+https://caffenero.com/uk/menu/
+status=200 html=38333 kcal_in_html=0
+  https://caffenerowebsite.blob.core.windows.net/production/data/menus/caffenero_nutrition_allergens-en_GB.pdf
+  https://caffenerowebsite.blob.core.windows.net/production/data/menus/caffenero_nutrition_allergens-en_IE.pdf
+
+== responses
+resp000.js	528905	200	https://analytics.tiktok.com/i18n/pixel/static/main.MWFjYmVlZGY0OA.js

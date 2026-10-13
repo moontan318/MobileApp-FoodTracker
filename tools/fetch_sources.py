@@ -118,17 +118,29 @@ async def fetch_with_browser():
 
 
 async def fetch_mcdonalds(page, context):
-    """Collects product ids from the menu pages, then fetches each product's details."""
-    await page.goto(f"{MCD}/gb/en-gb/full-menu.html", wait_until="domcontentloaded", timeout=60_000)
-    await page.wait_for_timeout(5000)
-    html = await page.content()
-    categories = sorted(set(re.findall(r'/gb/en-gb/full-menu/[a-z0-9\-]+\.html', html)))
-    ids = set(re.findall(r'data-product-id="(\d+)"', html))
-    for path in categories:
-        await page.goto(MCD + path, wait_until="domcontentloaded", timeout=60_000)
-        await page.wait_for_timeout(2500)
-        ids |= set(re.findall(r'data-product-id="(\d+)"', await page.content()))
-    print(f"McDonald's: {len(categories)} categories, {len(ids)} products")
+    """Crawls the menu and product pages for product ids, then fetches each product's details."""
+    queue = [f"{MCD}/gb/en-gb/full-menu.html", f"{MCD}/gb/en-gb/menu.html",
+             f"{MCD}/gb/en-gb/product/big-mac.html"]
+    seen, ids = set(), set()
+    while queue and len(seen) < 250:
+        url = queue.pop(0)
+        if url in seen:
+            continue
+        seen.add(url)
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=45_000)
+            await page.wait_for_timeout(2000)
+            html = await page.content()
+        except Exception as e:  # noqa: BLE001
+            print(f"McDonald's: {url}: {type(e).__name__}")
+            continue
+        if len(seen) == 1:
+            save_raw("debug_mcdonalds_menu.html", html.encode())
+        ids |= set(re.findall(r'data-product-id="(\d+)"', html))
+        for path in re.findall(r'(/gb/en-gb/(?:full-menu|menu|product)/[a-z0-9\-/]+\.html)', html):
+            if MCD + path not in seen:
+                queue.append(MCD + path)
+    print(f"McDonald's: {len(seen)} pages, {len(ids)} products")
     items = []
     for item_id in sorted(ids):
         url = f"{MCD}/dnaapp/itemDetails?country=UK&language=en&showLiveData=true&item={item_id}"

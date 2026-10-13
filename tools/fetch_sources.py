@@ -50,7 +50,24 @@ def fetch_cofid():
 
 
 # Second-round probes: full pages are searched for nutrition data and links.
-DEEP_PROBES = {
+DEEP_RAW = {
+    "greggs.json": "https://production-digital.greggs.co.uk/api/v1.0/articles/masters?ExcludeUnpublished=true&ExcludeDuplicates=true&ExcludeHiddenFromMenu=true",
+    "costa_menu.html": "https://www.costa.co.uk/menu",
+    "leon_menu.html": "https://leon.co/menu/",
+}
+
+
+def fetch_raw():
+    import gzip
+    dest = OUT / "raw"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name, url in RAW.items():
+        status, data = get(url, binary=True, timeout=120)
+        (dest / f"{name}.gz").write_bytes(gzip.compress(data, 9))
+        print(status, len(data), name)
+
+
+PROBES = {
     "nandos": "https://www.nandos.co.uk/food/menu",
     "wagamama": "https://www.wagamama.com/menu",
     "costa": "https://www.costa.co.uk/menu",
@@ -99,6 +116,23 @@ def deep_probe():
         print(f"{status}\t{len(text)}\tkcal={len(kcal)}\tlinks={len(interesting)}\t{name}")
 
 
+RAW = {
+    "greggs.json": "https://production-digital.greggs.co.uk/api/v1.0/articles/masters?ExcludeUnpublished=true&ExcludeDuplicates=true&ExcludeHiddenFromMenu=true",
+    "costa_menu.html": "https://www.costa.co.uk/menu",
+    "leon_menu.html": "https://leon.co/menu/",
+}
+
+
+def fetch_raw():
+    import gzip
+    dest = OUT / "raw"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name, url in RAW.items():
+        status, data = get(url, binary=True, timeout=120)
+        (dest / f"{name}.gz").write_bytes(gzip.compress(data, 9))
+        print(status, len(data), name)
+
+
 PROBES = {
     "off_uk_mcdonalds": "https://world.openfoodfacts.org/api/v2/search?countries_tags_en=united-kingdom&brands_tags=mcdonald-s&fields=code,product_name,brands,nutriments,serving_size&page_size=20",
     "off_uk_popular": "https://world.openfoodfacts.org/api/v2/search?countries_tags_en=united-kingdom&sort_by=unique_scans_n&fields=code,product_name,brands,nutriments,serving_size&page_size=5",
@@ -131,10 +165,12 @@ def probe():
 
 
 if __name__ == "__main__":
-    steps = sys.argv[1:] or ["deep"]
+    steps = sys.argv[1:] or ["raw"]
     if "cofid" in steps:
         fetch_cofid()
     if "probe" in steps:
         probe()
     if "deep" in steps:
         deep_probe()
+    if "raw" in steps:
+        fetch_raw()

@@ -42,7 +42,7 @@ enum class Nutrient(
     CHOLESTEROL("cholesterol", "Cholesterol", NutrientUnit.MILLIGRAM, NutrientCategory.MACRO, 300.0),
     WATER("water", "Water", NutrientUnit.GRAM, NutrientCategory.MACRO, null),
 
-    VITAMIN_A("vitamin_a", "Vitamin A (RAE)", NutrientUnit.MICROGRAM, NutrientCategory.VITAMIN, 900.0),
+    VITAMIN_A("vitamin_a", "Vitamin A", NutrientUnit.MICROGRAM, NutrientCategory.VITAMIN, 900.0),
     VITAMIN_C("vitamin_c", "Vitamin C", NutrientUnit.MILLIGRAM, NutrientCategory.VITAMIN, 90.0),
     VITAMIN_D("vitamin_d", "Vitamin D", NutrientUnit.MICROGRAM, NutrientCategory.VITAMIN, 20.0),
     VITAMIN_E("vitamin_e", "Vitamin E", NutrientUnit.MILLIGRAM, NutrientCategory.VITAMIN, 15.0),

@@ -12,13 +12,16 @@ data class Food(
     val commonName: String = "",
     val isCustom: Boolean = false,
     val portions: List<Portion> = emptyList(),
+    /** Where the data comes from: "UK" (CoFID), "US" (USDA) or a restaurant name. */
+    val source: String = "",
 ) {
     fun nutrientsFor(grams: Double): NutrientProfile = per100g * (grams / 100.0)
 
     /** The portion to suggest first when logging a whole item (e.g. "medium"), if any. */
     fun defaultPortion(): Portion? =
-        portions.firstOrNull { it.description.startsWith("medium") }
-            ?: portions.firstOrNull { it.description.contains("medium") }
+        portions.firstOrNull { it.description == "item" }
+            ?: portions.firstOrNull { it.description.startsWith("medium", ignoreCase = true) }
+            ?: portions.firstOrNull { it.description.contains("medium", ignoreCase = true) }
 }
 
 /**

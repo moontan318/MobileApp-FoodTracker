@@ -1,5 +1,0 @@
-https://www.dominos.co.uk/nutritional-information
-status: 403
-length: 36
-
-HTTPError: HTTP Error 403: Forbidden

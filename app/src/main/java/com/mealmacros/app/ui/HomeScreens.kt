@@ -254,7 +254,8 @@ private fun CustomFoodList(vm: AppViewModel) {
     if (foods.isEmpty()) {
         EmptyState(
             "No custom foods",
-            "The built-in database has over 8,700 foods. For anything else (e.g. a branded product) tap " +
+            "The built-in database has over 10,000 foods, including UK foods, takeaways and Greggs, Costa and " +
+                "LEON menus. For anything else (e.g. a supermarket product) tap " +
                 "“New food” and copy the values from its nutrition label.",
         )
         return
@@ -292,13 +293,21 @@ fun FoodCard(food: Food, onClick: () -> Unit, trailing: @Composable () -> Unit =
         Row(Modifier.padding(start = 16.dp, top = 10.dp, bottom = 10.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f).padding(end = 8.dp)) {
                 Text(food.name, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                val group = if (food.isCustom) "My food" else food.group
+                val group = when {
+                    food.isCustom -> "My food"
+                    food.source == "UK" || food.source == "US" -> "${food.source} · ${food.group}"
+                    else -> food.source
+                }
+                val item = food.defaultPortion()?.takeIf { it.description == "item" }
                 Text(
-                    "$group · per 100 g",
+                    if (item != null) "$group · per item (${formatGrams(item.grams)})" else "$group · per 100 g",
                     style = MaterialTheme.typography.bodySmall,
                     color = if (food.isCustom) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Text(macroSummary(food.per100g), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    macroSummary(if (item != null) food.nutrientsFor(item.grams) else food.per100g),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
             trailing()
         }

@@ -124,8 +124,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             foodDatabase = withContext(Dispatchers.IO) {
                 val assets = application.assets
-                assets.open("usda_sr28.tsv").reader().use { foods ->
-                    assets.open("usda_portions.tsv").reader().use { portions -> FoodDatabase.parse(foods, portions) }
+                assets.open("foods.tsv").reader().use { foods ->
+                    assets.open("portions.tsv").reader().use { portions -> FoodDatabase.parse(foods, portions) }
                 }
             }
         }

@@ -62,40 +62,78 @@ class NutritionCalculatorTest {
         assertEquals(0.0, portion.nutrients.amount(Nutrient.ENERGY))
     }
 
-    @Test
-    fun bundledDatabaseParsesAndSearches() {
-        val db = File("../app/src/main/assets/usda_sr28.tsv").reader().use { foods ->
-            File("../app/src/main/assets/usda_portions.tsv").reader().use { portions ->
+    private val db: FoodDatabase by lazy {
+        File("../app/src/main/assets/foods.tsv").reader().use { foods ->
+            File("../app/src/main/assets/portions.tsv").reader().use { portions ->
                 FoodDatabase.parse(foods, portions)
             }
         }
-        assertEquals(8789, db.foods.size)
+    }
 
+    private fun top(query: String, n: Int = 10) = db.search(query).take(n)
+
+    @Test
+    fun bundledDatabaseParsesAndSearches() {
+        assertTrue(db.foods.size > 10_000, "${db.foods.size} foods")
+        assertTrue(db.foods.count { it.source == "UK" } > 2800)
+
+        // USDA food, still found by the id stored in existing recipes.
         val potatoes = assertNotNull(db.get("usda:11674"))
         assertEquals("Potatoes, baked, flesh and skin, without salt", potatoes.name)
         assertEquals(93.0, potatoes.per100g.amount(Nutrient.ENERGY))
         assertEquals(535.0, potatoes.per100g.amount(Nutrient.POTASSIUM))
 
-        val results = db.search("potato raw")
-        assertTrue(results.isNotEmpty())
-        assertTrue(results.take(10).any { it.name.startsWith("Potatoes") }, results.take(10).joinToString { it.name })
-        assertTrue(db.search("ground beef").take(10).any { it.name.startsWith("Beef, ground") })
-        assertTrue(db.search("hamburger").isNotEmpty())
+        assertTrue(top("potato raw").any { it.name.startsWith("Potatoes") }, top("potato raw").joinToString { it.name })
+        assertTrue(top("hamburger").isNotEmpty())
+    }
+
+    @Test
+    fun ukFoodsAndNames() {
+        val aubergine = assertNotNull(db.foods.firstOrNull { it.name == "Aubergine, raw" })
+        assertEquals("UK", aubergine.source)
+        assertTrue(aubergine.per100g.isKnown(Nutrient.VITAMIN_C))
+        // UK foods rank first, and US words still find them.
+        assertEquals("UK", top("aubergine").first().source)
+        assertTrue(top("eggplant").any { it.name.startsWith("Aubergine") }, top("eggplant").joinToString { it.name })
+        assertTrue(top("zucchini").any { it.name.startsWith("Courgette") })
+        // USDA names are translated to UK English.
+        assertTrue(top("beef mince").all { it.name.startsWith("Beef") && "mince" in it.name })
+        assertTrue(top("ground beef").any { it.name.startsWith("Beef") && "mince" in it.name })
+        assertTrue(db.foods.any { it.source == "US" && it.name.startsWith("Beef mince") })
+        assertTrue(db.foods.none { it.source == "US" && it.name.startsWith("Eggplant") })
+        // US brands are not included.
+        assertTrue(db.foods.none { "KELLOGG" in it.name })
+    }
+
+    @Test
+    fun takeawayAndRestaurantFoods() {
+        assertTrue(top("tikka masala").isNotEmpty())
+        assertTrue(top("big mac").any { it.name.contains("Big Mac") })
+        assertTrue(top("doner kebab").isNotEmpty() || top("kebab").isNotEmpty())
+
+        val sausageRoll = assertNotNull(top("greggs sausage roll").firstOrNull { it.source == "Greggs" })
+        val item = assertNotNull(sausageRoll.defaultPortion())
+        assertEquals("item", item.description)
+        val kcal = sausageRoll.nutrientsFor(item.grams).amount(Nutrient.ENERGY)
+        assertTrue(kcal in 300.0..400.0, "sausage roll $kcal kcal")
+
+        val latte = assertNotNull(top("costa latte").firstOrNull { it.source == "Costa" })
+        assertTrue(latte.portions.any { it.description == "Medium" }, latte.portions.toString())
+        assertEquals("Medium", latte.defaultPortion()?.description)
+        assertTrue(db.foods.count { it.source == "LEON" } > 50)
     }
 
     @Test
     fun householdPortions() {
-        val db = File("../app/src/main/assets/usda_sr28.tsv").reader().use { foods ->
-            File("../app/src/main/assets/usda_portions.tsv").reader().use { portions ->
-                FoodDatabase.parse(foods, portions)
-            }
-        }
         val banana = assertNotNull(db.get("usda:09040"))
         val medium = assertNotNull(banana.defaultPortion())
         assertEquals("medium (7\" to 7-7/8\" long)", medium.description)
         assertEquals(118.0, medium.grams)
         // 1 medium banana = 118 g, banana is 89 kcal / 100 g.
         assertEquals(89.0 * 1.18, banana.nutrientsFor(medium.grams).amount(Nutrient.ENERGY), 1e-9)
-        assertTrue(db.foods.count { it.portions.isNotEmpty() } > 8000)
+
+        // UK bananas borrow the same household measures.
+        val ukBanana = assertNotNull(db.foods.firstOrNull { it.name == "Bananas, flesh only" })
+        assertEquals(118.0, ukBanana.defaultPortion()?.grams)
     }
 }

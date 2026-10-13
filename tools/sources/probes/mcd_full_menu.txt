@@ -1,5 +1,0 @@
-https://www.mcdonalds.com/gb/en-gb/full-menu.html
-status: 403
-length: 36
-
-HTTPError: HTTP Error 403: Forbidden

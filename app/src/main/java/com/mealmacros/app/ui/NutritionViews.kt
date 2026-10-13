@@ -184,7 +184,10 @@ fun NutritionFootnote(showIncomplete: Boolean) {
         add("% DV = percentage of the adult daily value (based on a 2,000 kcal diet).")
         if (showIncomplete) add("≥ some ingredients have no data for this nutrient, so the true amount may be higher.")
         add("– no data available.")
-        add("Food data: USDA National Nutrient Database for Standard Reference (SR28).")
+        add(
+            "Food data: McCance and Widdowson's Composition of Foods Integrated Dataset (UK, Open Government " +
+                "Licence), USDA SR28, and nutrition published by Greggs, Costa and LEON."
+        )
     }
     Text(
         lines.joinToString("\n"),

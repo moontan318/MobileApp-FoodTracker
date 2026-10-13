@@ -1,7 +1,0 @@
-https://www.tortilla.co.uk/menu/
-status=200 html=84258 kcal_in_html=0
-  https://a.storyblok.com/f/158888/x/2d51500f35/tortilla-landlord-pack-2021-web.pdf
-  https://a.storyblok.com/f/158888/x/2d51500f35/tortilla-landlord-pack-2021-web.pdf\
-
-== responses
-resp000.js	46481	200	https://www.tortilla.co.uk/_next/static/chunks/app/%5B...slug%5D/page-81ff44a37347b4b0.js

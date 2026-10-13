@@ -1,10 +1,13 @@
 name: Refresh food data
 
-# Re-downloads the UK source data (CoFID and the Greggs, Costa and LEON menus), rebuilds
+# Re-downloads the UK source data (CoFID and the restaurant menus), rebuilds
 # app/src/main/assets/foods.tsv and commits the result to the branch it was run on.
 # Run it from the Actions tab ("Run workflow") to pick up menu changes.
 on:
   workflow_dispatch:
+  push:
+    branches: [claude/trusting-galileo-r145fm]
+    paths: [tools/fetch_sources.py]
 
 permissions:
   contents: write
@@ -17,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl
+      - run: pip install openpyxl playwright && python -m playwright install --with-deps firefox
       - run: python -I tools/fetch_sources.py
       - run: python -I tools/build_food_db.py
       - name: Commit updated data

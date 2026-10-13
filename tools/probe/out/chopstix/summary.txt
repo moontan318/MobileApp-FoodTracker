@@ -1,8 +1,0 @@
-https://chopstixnoodlebar.com/menu/
-ERROR Error: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://chopstixnoodlebar.com/menu/
-Call log:
-  - navigating to "https://chopstixnoodlebar.com/menu/", waiting until "domcontentloaded"
-
-
-== responses
-

@@ -1,6 +1,0 @@
-https://www.harvester.co.uk/menus
-status=403 html=28918 kcal_in_html=0
-  
-
-== responses
-resp000.json	107088	200	https://www.harvester.co.uk/cdn-cgi/challenge-platform/h/g/fo/1327255879:1791882315:kX8B7hKrCNRGaF9Xc-nePA4v_YfVhd6GFDGFwTshWFQ/a49d8f3fb81ab45f/oJtApQ2c06HNiDZpJ7jIBypatgAyI1qgUPjBfcMfiNY-1791886279-1.2.1.1-yVJ1SKzd_7iyVImwgoYVxHN4a.30oAgoSk8h6ySAcYi7vXev53T3O9o45lj0v4o4

@@ -1,0 +1,33 @@
+name: Fetch food source data
+
+# Downloads source datasets (see tools/fetch_sources.py) and commits them to the
+# branch that triggered the run. Runs when the fetch script changes, or manually.
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - tools/fetch_sources.py
+      - .github/workflows/fetch-data.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - run: python tools/fetch_sources.py
+      - name: Commit fetched data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add tools/sources
+          git diff --cached --quiet && exit 0
+          git commit -m "Update fetched food source data"
+          git push

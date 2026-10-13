@@ -1,73 +1,430 @@
 #!/usr/bin/env python3
-"""Convert USDA SR28 (ABBREV.txt, FOOD_DES.txt, WEIGHT.txt) into the compact TSVs bundled with the app.
+"""Builds the food database bundled with the app (app/src/main/assets/foods.tsv + portions.tsv).
 
-Source data: USDA National Nutrient Database for Standard Reference, Release 28
-(public domain). The raw files can be obtained from the USDA, from the
-`fda-nutrient-database` npm package (ABBREV.txt, FOOD_DES.txt) and from
-github.com/alyssaq/usda-sqlite (data/WEIGHT.txt).
+Sources (all under tools/sources/; cofid/ and raw/ are refreshed by tools/fetch_sources.py in CI):
+  cofid/  McCance & Widdowson's Composition of Foods Integrated Dataset 2021 (UK, Open
+          Government Licence v3.0). The primary database, with UK food names.
+  usda/   USDA SR28 (public domain), from tools/convert_sr28.py. Renamed to UK wording;
+          US-branded and US-restaurant items are dropped.
+  raw/    Menu nutrition published by Greggs, Costa and LEON on their own websites.
 
-Usage: python3 tools/build_food_db.py <dir with the SR28 files> app/src/main/assets
-Writes usda_sr28.tsv (nutrients per 100 g) and usda_portions.tsv (household measures).
+Usage: python3 -I tools/build_food_db.py
 """
-import sys
+import csv
+import gzip
+import html
+import json
+import re
 from pathlib import Path
 
-# Nutrient key -> column index in ABBREV.txt (see SR28 documentation, p. 44).
-COLUMNS = {
-    "energy": 3, "protein": 4, "fat": 5, "carbs": 7, "fiber": 8, "sugars": 9,
-    "saturated_fat": 44, "mono_fat": 45, "poly_fat": 46, "cholesterol": 47, "water": 2,
-    "vitamin_a": 33, "vitamin_c": 20, "vitamin_d": 41, "vitamin_e": 40, "vitamin_k": 43,
-    "thiamin": 21, "riboflavin": 22, "niacin": 23, "pantothenic_acid": 24, "vitamin_b6": 25,
-    "folate": 29, "vitamin_b12": 31, "choline": 30,
-    "calcium": 10, "iron": 11, "magnesium": 12, "phosphorus": 13, "potassium": 14,
-    "sodium": 15, "zinc": 16, "copper": 17, "manganese": 18, "selenium": 19,
+ROOT = Path(__file__).resolve().parent
+SRC = ROOT / "sources"
+ASSETS = ROOT.parent / "app" / "src" / "main" / "assets"
+
+NUTRIENTS = [
+    "energy", "protein", "fat", "carbs", "fiber", "sugars", "saturated_fat", "mono_fat", "poly_fat",
+    "cholesterol", "water", "vitamin_a", "vitamin_c", "vitamin_d", "vitamin_e", "vitamin_k", "thiamin",
+    "riboflavin", "niacin", "pantothenic_acid", "vitamin_b6", "folate", "vitamin_b12", "choline",
+    "calcium", "iron", "magnesium", "phosphorus", "potassium", "sodium", "zinc", "copper", "manganese",
+    "selenium",
+]
+
+RESTAURANT_GROUP = "Restaurant & takeaway"
+
+
+def fmt(v):
+    return "" if v is None else f"{v:.4g}"
+
+
+# --------------------------------------------------------------------------------------------
+# CoFID (UK)
+# --------------------------------------------------------------------------------------------
+
+COFID_PREFIX = "McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2__"
+
+# nutrient key -> (sheet, CoFID column codes in order of preference)
+COFID_COLUMNS = {
+    "energy": ("1_3_Proximates", ["KCALS"]),
+    "protein": ("1_3_Proximates", ["PROT"]),
+    "fat": ("1_3_Proximates", ["FAT"]),
+    "carbs": ("1_3_Proximates", ["CHO"]),
+    "fiber": ("1_3_Proximates", ["AOACFIB", "ENGFIB"]),
+    "sugars": ("1_3_Proximates", ["TOTSUG"]),
+    "saturated_fat": ("1_3_Proximates", ["SATFOD"]),
+    "mono_fat": ("1_3_Proximates", ["MONOFOD", "MONOFODc"]),
+    "poly_fat": ("1_3_Proximates", ["POLYFOD", "POLYFODc"]),
+    "cholesterol": ("1_3_Proximates", ["CHOL"]),
+    "water": ("1_3_Proximates", ["WATER"]),
+    "vitamin_a": ("1_5_Vitamins", ["RETEQU"]),
+    "vitamin_c": ("1_5_Vitamins", ["VITC"]),
+    "vitamin_d": ("1_5_Vitamins", ["VITD"]),
+    "vitamin_e": ("1_5_Vitamins", ["VITE"]),
+    "vitamin_k": ("1_5_Vitamins", ["VITK1"]),
+    "thiamin": ("1_5_Vitamins", ["THIA"]),
+    "riboflavin": ("1_5_Vitamins", ["RIBO"]),
+    "niacin": ("1_5_Vitamins", ["NIAC"]),
+    "pantothenic_acid": ("1_5_Vitamins", ["PANTO"]),
+    "vitamin_b6": ("1_5_Vitamins", ["VITB6"]),
+    "folate": ("1_5_Vitamins", ["FOLT"]),
+    "vitamin_b12": ("1_5_Vitamins", ["VITB12"]),
+    "calcium": ("1_4_Inorganics", ["CA"]),
+    "iron": ("1_4_Inorganics", ["FE"]),
+    "magnesium": ("1_4_Inorganics", ["MG"]),
+    "phosphorus": ("1_4_Inorganics", ["P"]),
+    "potassium": ("1_4_Inorganics", ["K"]),
+    "sodium": ("1_4_Inorganics", ["NA"]),
+    "zinc": ("1_4_Inorganics", ["ZN"]),
+    "copper": ("1_4_Inorganics", ["CU"]),
+    "manganese": ("1_4_Inorganics", ["MN"]),
+    "selenium": ("1_4_Inorganics", ["SE"]),
 }
 
-GROUPS = {
-    "0100": "Dairy & Egg", "0200": "Spices & Herbs", "0300": "Baby Foods", "0400": "Fats & Oils",
-    "0500": "Poultry", "0600": "Soups & Sauces", "0700": "Sausages & Cold Meats",
-    "0800": "Breakfast Cereals", "0900": "Fruits", "1000": "Pork", "1100": "Vegetables",
-    "1200": "Nuts & Seeds", "1300": "Beef", "1400": "Beverages", "1500": "Fish & Shellfish",
-    "1600": "Legumes", "1700": "Lamb, Veal & Game", "1800": "Baked Products", "1900": "Sweets",
-    "2000": "Grains & Pasta", "2100": "Fast Foods", "2200": "Meals & Entrees", "2500": "Snacks",
-    "3500": "Indigenous Foods", "3600": "Restaurant Foods",
+# CoFID group code -> display group (longest matching prefix wins)
+COFID_GROUPS = {
+    "A": "Cereals & bakery", "AB": "Sandwiches", "AC": "Rice", "AD": "Pasta", "AE": "Pizza",
+    "AF": "Bread", "AG": "Bread", "AI": "Breakfast cereals", "AM": "Biscuits", "AN": "Cakes",
+    "AP": "Buns & pastries", "AS": "Puddings & desserts",
+    "B": "Dairy", "BJ": "Cream", "BL": "Cheese", "BN": "Yoghurt", "BP": "Ice cream",
+    "BR": "Puddings & desserts", "C": "Eggs",
+    "D": "Vegetables", "DA": "Potatoes", "DB": "Beans & pulses", "DR": "Vegetable dishes",
+    "F": "Fruit", "FC": "Juices", "PE": "Juices", "G": "Nuts & seeds", "H": "Herbs & spices",
+    "J": "Fish & seafood", "M": "Meat", "MBG": "Burgers", "MI": "Meat products", "MIG": "Meat dishes",
+    "MR": "Meat dishes", "O": "Fats & oils", "P": "Drinks", "Q": "Alcoholic drinks",
+    "S": "Sugars & sweets", "SN": "Snacks", "W": "Soups & sauces",
 }
 
 
-def fields(line):
-    return [f.strip("~") for f in line.rstrip("\r\n").split("^")]
+def cofid_group(code, name):
+    if "takeaway" in name.lower() or "restaurant" in name.lower():
+        return "Takeaway"
+    for n in range(len(code), 0, -1):
+        if code[:n] in COFID_GROUPS:
+            return COFID_GROUPS[code[:n]]
+    return ""
 
 
-def main(src, dest_dir):
-    src = Path(src)
-    dest_dir = Path(dest_dir)
-    desc = {}
-    for line in (src / "FOOD_DES.txt").read_text(encoding="latin-1").splitlines():
-        f = fields(line)
-        desc[f[0]] = (f[2], f[1], f[4])  # long description, group, common name
+def cofid_value(text):
+    text = text.strip()
+    if text == "Tr":
+        return 0.0  # trace
+    if text in ("", "N"):
+        return None  # not measured
+    return float(text)
 
-    keys = list(COLUMNS)
-    out = ["\t".join(["id", "name", "group", "common"] + keys)]
-    for line in (src / "ABBREV.txt").read_text(encoding="latin-1").splitlines():
-        f = fields(line)
-        name, group, common = desc[f[0]]
-        values = [f[COLUMNS[k]] for k in keys]
-        out.append("\t".join([f[0], name, GROUPS.get(group, ""), common] + values))
 
-    (dest_dir / "usda_sr28.tsv").write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"wrote {len(out) - 1} foods")
+def load_cofid():
+    sheets = {}
+    for sheet in {s for s, _ in COFID_COLUMNS.values()}:
+        rows = list(csv.reader(open(SRC / "cofid" / f"{COFID_PREFIX}{sheet}.csv", encoding="utf-8")))
+        sheets[sheet] = (rows[1], {r[0].strip(): r for r in rows[3:] if r[0].strip()})
+    foods = []
+    for code, row in sheets["1_3_Proximates"][1].items():
+        name = " ".join(row[1].split())
+        values = {}
+        for key, (sheet, cols) in COFID_COLUMNS.items():
+            header, data = sheets[sheet]
+            for col in cols:
+                v = cofid_value(data[code][header.index(col)])
+                if v is not None:
+                    values[key] = v
+                    break
+        foods.append({"id": f"cofid:{code}", "name": name, "group": cofid_group(row[3].strip(), name),
+                      "source": "UK", "common": "", "values": values})
+    return foods
 
-    # WEIGHT.txt: id, seq, amount, description, grams. Stored as grams for ONE unit.
-    portions = ["\t".join(["id", "description", "grams"])]
-    for line in (src / "WEIGHT.txt").read_text(encoding="latin-1").splitlines():
-        f = fields(line)
-        amount, grams = float(f[2] or 0), float(f[4] or 0)
-        if f[0] not in desc or amount <= 0 or grams <= 0:
+
+# --------------------------------------------------------------------------------------------
+# USDA SR28, renamed to UK English
+# --------------------------------------------------------------------------------------------
+
+# Applied in order. US wording stays searchable through the "common" column.
+UK_NAMES = [(re.compile(p), r) for p, r in [
+    (r"^Biscuits, ", "Scones (American biscuits), "),
+    (r"\bbiscuits\b", "scones"),
+    (r"^Cookies, ", "Biscuits, "),
+    (r"\bcookies?\b", "biscuits"),
+    (r"^Snacks, potato chips", "Snacks, crisps"),
+    (r"\bpotato chips\b", "crisps"),
+    (r"\bfrench fried\b", "chips (french fries)"),
+    (r"\bfrench fries\b", "chips (french fries)"),
+    (r"^Candies, ", "Sweets, "),
+    (r"\bcandies\b", "sweets"),
+    (r"^(Beef|Pork|Lamb|Turkey|Chicken|Veal), ground\b", r"\1 mince"),
+    (r"\bground (beef|pork|lamb|turkey|chicken)\b", r"\1 mince"),
+    (r"^Eggplant\b", "Aubergine"),
+    (r"\beggplant\b", "aubergine"),
+    (r"^Squash, summer, zucchini", "Courgette"),
+    (r"\bzucchini\b", "courgette"),
+    (r"^Coriander \(cilantro\) leaves", "Coriander leaves"),
+    (r"\bcilantro\b", "coriander leaves"),
+    (r"^Arugula\b", "Rocket"),
+    (r"\barugula\b", "rocket"),
+    (r"^Rutabagas\b", "Swede"),
+    (r"\brutabagas?\b", "swede"),
+    (r"\bscallions\b", "spring onions"),
+    (r"^Peas, edible-podded", "Mangetout (edible-podded peas)"),
+    (r"\bsnow peas\b", "mangetout"),
+    (r"^Chickpeas \(garbanzo beans, bengal gram\)", "Chickpeas"),
+    (r"\bgarbanzo\b", "chickpea"),
+    (r"^Beans, lima\b", "Beans, butter (lima)"),
+    (r"\blima beans\b", "butter beans"),
+    (r"^Beans, navy\b", "Beans, haricot (navy)"),
+    (r"^Beets\b", "Beetroot"),
+    (r"\bbeets\b", "beetroot"),
+    (r"^Peppers, sweet\b", "Peppers"),
+    (r"^Peppers, hot chili", "Chillies, hot"),
+    (r"\bchili\b", "chilli"),
+    (r"^Corn, sweet,", "Sweetcorn,"),
+    (r"^Cornstarch\b", "Cornflour"),
+    (r"\bcornstarch\b", "cornflour"),
+    (r"^Crustaceans, shrimp", "Prawns"),
+    (r"\bshrimp\b", "prawns"),
+    (r"^Catsup\b", "Ketchup"),
+    (r"\bcatsup\b", "ketchup"),
+    (r"^Gelatin desserts\b", "Jelly (dessert)"),
+    (r"^Jellies\b", "Jelly (fruit spread)"),
+    (r"\bbroiled\b", "grilled"),
+    (r"\bbroilers? or fryers, ", ""),
+    (r"\bconfectioners'?", "icing"),
+    (r"\bpowdered sugar\b", "icing sugar"),
+    (r"\ball-purpose\b", "plain"),
+    (r"\bself-rising\b", "self-raising"),
+    (r"\bheavy whipping\b", "double / whipping"),
+    (r"^Molasses\b", "Black treacle (molasses)"),
+    (r"\bmolasses\b", "black treacle (molasses)"),
+    (r"\bromaine\b", "cos (romaine)"),
+    (r"\bfrankfurter\b", "frankfurter (hot dog sausage)"),
+    (r"\bfiber\b", "fibre"),
+    (r"\bflavor\b", "flavour"),
+    (r"\bflavored\b", "flavoured"),
+    (r"\bcolor\b", "colour"),
+    (r"\b([Yy])ogurt\b", r"\1oghurt"),
+    (r"\bcenter\b", "centre"),
+    (r"\bcanola\b", "rapeseed (canola)"),
+    (r"^Beverages, carbonated", "Fizzy drinks"),
+    (r"\bcarbonated beverage\b", "fizzy drink"),
+]]
+
+USDA_GROUPS = {
+    "Sweets": "Sugars & sweets", "Fast Foods": "Fast food (US)", "Baked Products": "Cereals & bakery",
+    "Sausages & Cold Meats": "Meat products", "Grains & Pasta": "Cereals & bakery",
+    "Fish & Shellfish": "Fish & seafood", "Spices & Herbs": "Herbs & spices", "Dairy & Egg": "Dairy",
+    "Legumes": "Beans & pulses", "Lamb, Veal & Game": "Meat", "Beef": "Meat", "Pork": "Meat",
+    "Poultry": "Meat", "Meals & Entrees": "Meals", "Fruits": "Fruit",
+}
+
+# All-caps words are US brand names (e.g. KELLOGG'S); these generic ones are not.
+NOT_BRANDS = {"USDA", "NFS", "DHA", "ARA", "EPA", "UHT", "NLEA", "WIC", "II", "III"}
+BRAND = re.compile(r"\b[A-Z][A-Z'&.\-]{2,}\b")
+
+
+def uk_name(name):
+    for pattern, repl in UK_NAMES:
+        name = pattern.sub(repl, name)
+    return name[:1].upper() + name[1:]
+
+
+def load_usda():
+    rows = list(csv.reader(open(SRC / "usda" / "usda_sr28.tsv", encoding="utf-8"), delimiter="\t"))
+    header = rows[0]
+    foods = []
+    for r in rows[1:]:
+        f = dict(zip(header, r))
+        if f["group"] in ("Restaurant Foods", "Indigenous Foods"):
             continue
-        portions.append("\t".join([f[0], f[3].strip(), f"{grams / amount:.4g}"]))
-    (dest_dir / "usda_portions.tsv").write_text("\n".join(portions) + "\n", encoding="utf-8")
-    print(f"wrote {len(portions) - 1} portions")
+        if any(w not in NOT_BRANDS for w in BRAND.findall(f["name"])):
+            continue
+        name = uk_name(f["name"])
+        common = f["common"] if name == f["name"] else f"{f['common']} {f['name']}".strip()
+        foods.append({"id": f"usda:{f['id']}", "name": name, "group": USDA_GROUPS.get(f["group"], f["group"]),
+                      "source": "US", "common": common,
+                      "values": {k: float(f[k]) for k in NUTRIENTS if f.get(k)}})
+    return foods
+
+
+def load_usda_portions():
+    portions = {}
+    for line in (SRC / "usda" / "usda_portions.tsv").read_text(encoding="utf-8").splitlines()[1:]:
+        ndb, desc, grams = line.split("\t")
+        portions.setdefault(ndb, []).append((desc, float(grams)))
+    return portions
+
+
+# --------------------------------------------------------------------------------------------
+# Restaurants
+# --------------------------------------------------------------------------------------------
+
+def label_values(label, weight):
+    """Converts per-portion label values (kcal, fat, saturates, carbs, sugars, fibre, protein,
+    salt) to nutrients per 100 g."""
+    keys = {"kcal": "energy", "fat": "fat", "saturates": "saturated_fat", "carbs": "carbs",
+            "sugars": "sugars", "fibre": "fiber", "protein": "protein"}
+    values = {keys[k]: v * 100.0 / weight for k, v in label.items() if k in keys and v is not None}
+    if label.get("salt") is not None:
+        values["sodium"] = label["salt"] * 400.0 * 100.0 / weight  # salt (g) -> sodium (mg)
+    return values
+
+
+def raw(name):
+    return gzip.decompress((SRC / "raw" / name).read_bytes()).decode("utf-8")
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+
+def restaurant_food(fid, name, source, values):
+    return {"id": fid, "name": name, "group": RESTAURANT_GROUP, "source": source, "common": "", "values": values}
+
+
+def load_greggs():
+    foods, portions = [], {}
+    for a in json.loads(raw("greggs.json.gz")):
+        size = (a.get("articleSize") or {}).get("size")
+        nv = {n["name"]: n["value"] for n in a.get("nutritionalValues") or []}
+        if not size or nv.get("Calories") is None:
+            continue
+        fid = f"greggs:{a['articleCode']}"
+        name = " ".join(a["articleName"].replace("®", "").split())
+        foods.append(restaurant_food(fid, f"Greggs {name}", "Greggs", label_values({
+            "kcal": nv.get("Calories"), "fat": nv.get("Fat"), "saturates": nv.get("Saturates"),
+            "carbs": nv.get("Carbohydrates"), "sugars": nv.get("Sugar"), "protein": nv.get("Protein"),
+            "salt": nv.get("Salt"),
+        }, size)))
+        portions[fid] = [("item", size)]
+    return foods, portions
+
+
+def astro_decode(x):
+    """Costa's page embeds its menu in Astro's serialisation: [0, value] or [1, [items]]."""
+    if isinstance(x, list) and len(x) == 2 and isinstance(x[0], int):
+        t, v = x
+        return [astro_decode(i) for i in v] if t == 1 else astro_decode(v)
+    if isinstance(x, dict):
+        return {k: astro_decode(v) for k, v in x.items()}
+    return x
+
+
+COSTA_DEFAULT_MILK = {None, "NA", "Semi-skimmed"}
+COSTA_SIZE_ORDER = ["Small", "Medium", "Large"]
+
+
+def load_costa():
+    props = html.unescape(re.search(r'props="([^"]*)"', raw("costa_menu.html.gz")).group(1))
+    catalog = astro_decode(json.loads(props))["catalog"]
+    foods, portions, seen = [], {}, set()
+    for section in catalog.values():
+        for group in section:
+            for p in group.get("products") or []:
+                if p["id"] in seen:
+                    continue
+                seen.add(p["id"])
+                by_milk = {}  # milk type -> size -> (preference, per 100 g, per portion)
+                for n in p.get("nutrition") or []:
+                    var = n.get("variations") or {}
+                    per100g, portion = n.get("nutritionPer100g"), n.get("nutritionPerPortion")
+                    if not per100g or not portion or not portion.get("portionWeight"):
+                        continue
+                    if per100g.get("energykCal") is None or var.get("coffeeType") not in (None, "NA", "Signature"):
+                        continue  # skip incomplete records and decaf / alternative roasts
+                    pref = {"Takeaway": 0, "Eat In": 1}.get(var.get("serviceDelivery"), 2)
+                    sizes = by_milk.setdefault(var.get("milkType"), {})
+                    size = var.get("size")
+                    if size not in sizes or pref < sizes[size][0]:
+                        sizes[size] = (pref, per100g, portion)
+                for milk, sizes in by_milk.items():
+                    order = sorted(sizes, key=lambda s: COSTA_SIZE_ORDER.index(s) if s in COSTA_SIZE_ORDER else -1)
+                    v = (sizes.get("Medium") or sizes[order[0]])[1]
+                    if milk in COSTA_DEFAULT_MILK:
+                        suffix = ""
+                    elif milk == "None":
+                        suffix = ", no milk"
+                    else:
+                        suffix = f", {milk.lower()} milk"
+                    fid = f"costa:{slug(p['name'] + suffix)}"
+                    name = f"Costa {' '.join(p['name'].split())}{suffix}"
+                    values = {k: v.get(src) for k, src in [
+                        ("energy", "energykCal"), ("fat", "fat"), ("saturated_fat", "saturates"),
+                        ("carbs", "carbohydrates"), ("sugars", "sugars"), ("fiber", "fibre"),
+                        ("protein", "protein"), ("vitamin_b6", "vitaminB6"), ("vitamin_b12", "vitaminB12"),
+                        ("vitamin_c", "vitaminC"), ("zinc", "zinc")]}
+                    if v.get("salt") is not None:
+                        values["sodium"] = v["salt"] * 400.0
+                    foods.append(restaurant_food(fid, name, "Costa", {k: x for k, x in values.items() if x is not None}))
+                    portions[fid] = [(s if s in COSTA_SIZE_ORDER else "item", sizes[s][2]["portionWeight"])
+                                     for s in order]
+    return foods, portions
+
+
+def load_leon():
+    page = raw("leon_menu.html.gz")
+    foods, portions, seen = [], {}, set()
+    for chunk in re.findall(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)', page):
+        text = json.loads(chunk)
+        for m in re.finditer(r'"name":"((?:[^"\\]|\\.)*)","nutritionInfo":(\{[^{}]*\})', text):
+            name = " ".join(json.loads(f'"{m.group(1)}"').split())
+            info = json.loads(m.group(2))
+            weight = info.get("totalPortionWeight")
+            if not weight or info.get("kcal") is None or name.lower() in seen:
+                continue
+            seen.add(name.lower())
+            fid = f"leon:{slug(name)}"
+            foods.append(restaurant_food(fid, f"LEON {name}", "LEON", label_values({
+                "kcal": info.get("kcal"), "fat": info.get("fat"), "saturates": info.get("satFat"),
+                "carbs": info.get("carb"), "sugars": info.get("sugar"), "fibre": info.get("fibre"),
+                "protein": info.get("protein"), "salt": info.get("salt"),
+            }, weight)))
+            portions[fid] = [("item", weight)]
+    return foods, portions
+
+
+# --------------------------------------------------------------------------------------------
+
+def main():
+    usda_portions = load_usda_portions()
+    cofid = load_cofid()
+    usda = load_usda()
+    portions = {f"usda:{k}": v for k, v in usda_portions.items()}
+    restaurants = []
+    for loader in (load_greggs, load_costa, load_leon):
+        foods, p = loader()
+        restaurants += foods
+        portions.update(p)
+
+    # Borrow USDA household measures ("1 medium") for common CoFID foods.
+    by_name = {f["name"]: f["id"] for f in cofid}
+    for line in (ROOT / "cofid_portion_links.tsv").read_text(encoding="utf-8").splitlines():
+        if not line or line.startswith("#"):
+            continue
+        name, ndb = line.split("\t")
+        if name not in by_name or ndb not in usda_portions:
+            raise SystemExit(f"bad portion link: {line}")
+        portions[by_name[name]] = usda_portions[ndb]
+
+    foods = cofid + restaurants + usda
+    ids = [f["id"] for f in foods]
+    dupes = {i for i in ids if ids.count(i) > 1}
+    assert not dupes, f"duplicate ids: {sorted(dupes)[:10]}"
+
+    with open(ASSETS / "foods.tsv", "w", encoding="utf-8", newline="") as out:
+        out.write("\t".join(["id", "name", "group", "source", "common"] + NUTRIENTS) + "\n")
+        for f in foods:
+            cells = [f["id"], f["name"], f["group"], f["source"], f["common"]]
+            cells += [fmt(f["values"].get(k)) for k in NUTRIENTS]
+            out.write("\t".join(" ".join(c.split()) if c else "" for c in cells) + "\n")
+    count = 0
+    with open(ASSETS / "portions.tsv", "w", encoding="utf-8", newline="") as out:
+        out.write("id\tdescription\tgrams\n")
+        for fid in ids:
+            for desc, grams in portions.get(fid, []):
+                out.write(f"{fid}\t{desc}\t{grams:.4g}\n")
+                count += 1
+
+    by_source = {}
+    for f in foods:
+        by_source[f["source"]] = by_source.get(f["source"], 0) + 1
+    print(", ".join(f"{k} {v}" for k, v in by_source.items()), f"| total {len(foods)} foods, {count} portions")
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:3])
+    main()

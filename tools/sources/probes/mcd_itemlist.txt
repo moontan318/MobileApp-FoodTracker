@@ -1,0 +1,5 @@
+https://www.mcdonalds.com/dnaapp/itemList?country=UK&language=en&showLiveData=true
+status: 403
+length: 36
+
+HTTPError: HTTP Error 403: Forbidden

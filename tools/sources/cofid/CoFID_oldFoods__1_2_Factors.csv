@@ -1,0 +1,400 @@
+Food Code,Food Name,Description,Group,Previous,Main data references,Footnote,Edible proportion ,Specific gravity ,Total solids (g),Nitrogen conversion factor ,Glycerol conversion factor 
+,,,,,,,,,,,
+,,,,,,,,,,,
+16-250,"Abalone, canned in brine, drained",Literature sources,JM,,"Wu Leung et al. (1972) Food composition table for use in East Asia. Food and Agriculture Organization and US Department of Health, Education and Welfare",,N,,,,
+17-241,Advocaat,4 samples of different brands,QI,50-1119 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994 with additional values from 50-1119",,1.00,1.09,39.6,,
+17-216,"Ale, pale, bottled",Mixed sample from different brewers,QA,50-1100 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,1.00,N,,
+17-221,"Ale, strong ale/barley wine",Mixed sample from different brewers,QA,50-1103 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994. Additional data from 50-1103",,1.00,1.02,8.0,,
+14-302,"Apricots, canned in juice, whole contents","10 samples, 5 brands",FA,14-035 50-864 ,"LGC, Nutritional composition of fruit products, 1985-1986. Carotene estimated from apricots in syrup, LGC Determination of cis carotenoids in foodstuffs, 1997",,1.00,,,6.25,0.800
+14-290,"Apricots, canned in syrup, whole contents","10 samples, 9 brands",FA,14-034 50-863 ,"LGC, Nutritional composition of fruit products, 1985-1986; carotene from LGC 'Determination of cis carotenoids in foodstuffs' 1997",,1.00,,,6.25,0.800
+12-198,Arctic roll,"Ice cream roll with raspberry sauce and sponge; 10 samples, 2 brands",BP,50-262 11-282 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+13-160,"Asparagus, canned, re-heated, drained","10 samples, 3 brands",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.60,,,,
+11-158,"Baby cereals, rice-based","10 samples, 4 brands",AK,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+11-159,"Baby cereals, various cereal-based","17 samples, 10 varieties, e.g. oat based, mixed cereal and fruit, etc.",AK,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+11-160,"Baby cereals, wheat-based","10 samples, 4 brands",AK,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+17-411,"Baby fruit juice drink, concentrated, fortified with vitamin C",10 samples of the same brand (Ribena),PE,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-410,"Baby fruit juice, fortified with vitamin C","10 samples, 2 brands; assorted flavours",PE,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+13-163,"Bamboo shoots, canned, drained",Analysis and literature sources,DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.58,,,,
+14-044,"Banana chips, crystallised","10 samples, 5 brands",FA,,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+13-050,"Beans, balor, canned, drained",10 cans (Amrit). Rinsed,DB,,"Vegetables, Herbs and Spices Supplement, 1991",,0.56,,,,
+13-069,"Beans, broad, canned, re-heated, drained","10 cans, 4 brands",DB,,"LGC, Canned and other processed vegetable products survey, 1985",,0.68,,,,
+13-428,"Beans, broad, frozen, boiled in unsalted water","10 samples, 7 brands.  Boiled 3-10 minutes",DB,13-068 50-702 ,"LGC, Frozen vegetable survey, 1985; selenium from 'Analysis of foods for Selenium' 1994. Vitamin K1 from Bolton-Smith et al Br.J. Nutr.83, 2000",,1.00,,,6.25,0.800
+13-079,"Beans, chilli, canned, re-heated",10 cans (Batchelors). Simmered 15 minutes,DB,,"Vegetables, Herbs and Spices Supplement, 1991",,1.00,,,,
+13-085,"Beans, green/French, canned, re-heated, drained","10 cans, 6 brands. Whole and sliced",DB,,"Vegetables, Herbs and Spices Supplement, 1991",,0.54,,,,
+13-432,"Beans, green/French, frozen, boiled in unsalted water","10 samples, 8 brands.  Boiled 3-8 minutes",DB,13-084 50-708 ,"As Vegetables, Herbs and Spices Supplement (1991) 13-084 with selenium, folate and carotenoids from new LGC data. Vitamin K1 from Bolton-Smith et al Br.J. Nutr.83, 2000",,1.00,,,6.25,0.800
+13-094,"Beans, lilva, canned, drained","10 cans, 2 brands. Rinsed",DB,,"Vegetables, Herbs and Spices Supplement, 1991",,0.52,,,,
+13-101,"Beans, papri, canned, drained",10 cans (Amrit). Rinsed,DB,,"Vegetables, Herbs and Spices Supplement, 1991",,0.57,,,,
+13-055,"Beansprouts, mung, canned, drained",10 cans,DB,,"MW4, 1978. Values revised for Vegetables, Herbs and Spices Supplement, 1991",,0.55,,,,
+19-172,"Beef in sauce with vegetables, chilled/frozen, reheated","8 samples, 5 brands including braised steak, beef bourguignonne and goulash",MR,359,"LGC, Nutrient analysis of meat and poultry products, 1994-1995",,1.00,,,,0.950
+19-112,Beef slices,10 samples including topside and wafer thin roasted beef. 100% meat,MI,,"LGC, Nutrient analysis of meat and poultry products, 1994-1995",,1.00,,,,
+19-140,"Beef, mince, in gravy, canned","10 samples, 6 brands",MI,349,"Meat Products and Dishes Supplement, 1996",,1.00,,,,0.930
+50-377,"Beef, salted, dried, raw",Literature sources,MAC,,"Wu Leung, Busson and Jardin (1968) Food composition table for use in Africa. Food and Agriculture Organization and US Department of Health, Education and Welfare, Bethesda",,1.00,,,,
+50-1094,"Beer, bitter, canned",6 samples,QA,,"MW4, 1978",,1.00,1.01,3.3,,
+50-1095,"Beer, bitter, draught",5 samples from different brewers,QA,,"MW4, 1978",,1.00,1.00,3.3,,
+50-1096,"Beer, bitter, keg",6 samples from different brewers,QA,,"MW4, 1978",,1.00,1.00,3.6,,
+17-209,"Beer, bitter, low alcohol",10 samples from different brewers,QA,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-215,"Beer, mild, draught",Mixed sample from different brewers,QA,50-1097 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994 (17-215). Additional data from 50-1097",,1.00,1.01,2.5,,
+11-524,"Biscuits, wafer, filled","9 packets, assorted",AM,11-186 50-107 ,"MW4 (1978) with fats and vitamin E from Milk Marketing Board, 1992, Fat, Fatty acids and vitamin E content of a selection of biscuits, cakes and desserts.",,1.00,,,5.70,0.956
+17-291,Black bean sauce,"6 samples, 3 brands",WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+14-056,"Blackcurrants, canned in juice, whole contents","4 samples, 2 brands, drained proportion = 0.54",FA,50-874 ,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+14-057,"Blackcurrants, canned in syrup, whole contents",3 samples of the same brand (Hartley's),FA,50-875 ,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+14-058,"Boysenberries, canned in syrup, whole contents",Literature sources. Drained proportion = 0.53,FA,,"Gebhardt et al. (1982) Composition of foods: fruits and fruit juices, raw, processed and prepared, Agriculture Handbook No. 8-9",,1.00,,,,
+11-076,"Bread, currant","10 samples, 10 different shops",AF,50-037 ,"Cereals and Cereal Products Supplement,  1988; and MW5 (50-038)",,1.00,,,5.70,
+11-077,"Bread, currant, toasted","10 samples, 10 different shops. Calculated using 12% weight loss",AF,50-038 ,"Cereals and Cereal Products Supplement,  1988; and MW5 (50-038)",,1.00,,,5.70,
+11-926,"Bread, focaccia, herb / garlic and coriander","8 samples, 6 products",AF,11-399 ,Nutrient analysis of bread and morning goods 1999,,1.00,,,5.70,
+11-481,"Bread, hamburger buns","5 packets of 6 buns including frozen, topped with sesame seeds",AG,11-121 50-061 ,"Cereals and Cereal Products Supplement, 1988. Selenium, from Analysis of foods for Selenium 1994",,1.00,,,5.70,0.670
+11-932,"Bread, milk, white, sliced","5 samples, 4 products",AF,11-629 ,Nutrient analysis of bread and morning goods 1999,,1.00,,,5.70,
+11-091,"Bread, rye","15 samples, different shops; literature sources",AF,50-046 ,"Cereals and Cereal Products (1988) 11-091 some values transferred from MW5 50-046, same samples",,1.00,,,5.70,
+11-069,"Breadcrumbs, retail","10 samples, 10 different brands",AF,,"Cereals and Cereal Products Supplement, 1988",,1.00,,,5.70,
+13-169,"Breadfruit, canned, drained",10 cans (Highland Pride),DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.67,,,,
+11-135,"Breakfast cereal, Grapenuts",Manufacturer's data (General Foods),AI,,"Data as Cereals and Cereal Products Supplement,. This data is pre 1989 and composition of this product may have changed since publication.",,1.00,,,6.25,
+11-502,"Breakfast cereal, Start",Manufacturer's data (Kelloggs),AI,11-151 50-087 ,"Data not previously published in MW6. Data from Manufacturer (Kelloggs). Proximate values -  total carbohydrate and its components, starch and sugars are expressed as their monosaccharide equivalents",,1.00,,,6.25,
+11-770,"Breakfast cereal, sultana bran, fortified","14 samples, 6 products, including Kellogg's and own label",AI,11-504 ,Nutrient survey of breakfast cereals 2004,,1.00,,,5.83,0.720
+11-776,"Breakfast cereal, wheat biscuit with fruit, fortified","6 samples, 2 products including Weetabix minibix with fruit and nuts and with banana",AI,,"LGC, Nutrient survey of breakfast cereals, 2004",,1.00,,,5.83,0.720
+13-173,"Broccoli, green, frozen, boiled in unsalted water","10 samples, 8 brands; boiled 4-10 minutes",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,1.00,,,,
+17-210,"Brown ale, bottled",Mixed sample from different brewers,QA,50-1098 ,"MW4, 1978.  Values reviewed for Miscellaneous Foods Supplement, 1994.. Additional data from 50-1098",,1.00,1.01,4.2,,
+17-292,Brown sauce,"9 bottles, 3 brands",WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+13-443,"Brussels sprouts, frozen, boiled in unsalted water","10 samples, 8 brands; boiled 5-10 minutes",DG,13-181 50-748 ,"LGC, Frozen vegetable survey, 1985-1986; folate from LGC 'Individual folates in foodstuffs' 1996. Vitamin K1 from Bolton-Smith et al Br.J. Nutr.83, 2000",,1.00,,,6.25,0.800
+11-231,Burfi,"5 assorted samples, fudge-type sweet",AP,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+19-036,"Burger, beef, low fat, fried","11 samples, 4 brands, chilled and frozen",MI,309,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.930
+19-037,"Burger, beef, low fat, grilled","11 samples, 4 brands, chilled and frozen",MI,,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,
+19-035,"Burger, beef, low fat, raw","11 samples, 4 brands. 80% meat, chilled and frozen",MI,308,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.930
+19-048,"Burger, Quarter Pounder, takeaway","Portion includes a quarter  pound beefburger, bun, ketchup, mustard, onions and pickles",MI,,Manufacturer's data (McDonald's). As Meat Products and Dishes Supplement 1996.,,1.00,,,,
+15-353,"Burger/grill, protein substitute, unbreaded, baked/grilled","7 samples, 3 brands",DR,425,"Fatty Acids Supplement, 1998",,,,,,0.800
+12-022,Buttermilk,3 cultured samples (Eden Vale),BAR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-023,Buttermilk powder,"Commercial ingredient, calculated from uncultured buttermilk",BAR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+17-412,"Cabbage, dried",Calculated from raw cabbage,DI,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+13-186,"Cabbage, frozen, boiled in unsalted water","10 samples, 5 brands. Boiled 3-10 minutes",DG,,"LGC, Frozen vegetable survey, 1985",,1.00,,,,
+11-741,"Cake bars, not chocolate","10 samples, 4 products, including golden syrup, ginger, fruit flavoured bars",AN,,"Direct Laboratories, Nutrient analysis catch up project, 2003",,1.00,,,5.70,0.956
+11-191,Cake mix,"10 samples, 3 brands",AN,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+11-525,"Cake mix, made up",Made as packet directions. Fats analysed,AN,11-192 50-110 ,"Data as MW5 (recipe) and Cereals and Cereal Products Supplement (1988) 11-192; Fats from Milk Marketing Board, fat, fatty acids and vitamin E content of a selection of biscuits, cakes and desserts, 1992",,1.00,,,6.25,0.956
+11-531,"Cake, madeira, retail","10 samples including lemon, not iced",AN,11-209 11-368 50-118 ,"Data from MW5 (50-118), fats as Fatty Acids Supplement 11-368 and vitamin E from Milk Marketing Board, fat, fatty acids and vitamin E content of a selection of biscuits, cakes and desserts, 1992",,1.00,,,5.70,0.956
+11-213,"Cake, sponge, jam filled, retail","10 cakes, 3 brands; sandwich and Swiss roll",AN,50-121 ,MW4  1978.,,1.00,,,,
+19-184,"Cannelloni, retail, reheated","10 samples, 4 brands, chilled and frozen",MR,361,"Meat Products and Dishes Supplement, 1996; fatty acids analysed in LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,0.950
+17-357,Carob powder,2 samples of the same brand,WY,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+13-206,"Carrots, frozen, boiled in unsalted water","10 samples, 9 brands baby and sliced; boiled 5-12 minutes",DG,,"LGC, Frozen vegetable survey, 1985",,1.00,,,,
+13-214,Cassava chips,Literature sources and calculation from raw,DG,,"Vegetables, Herbs and Spices Supplement, 1991",,1.00,,,,
+19-163,"Casserole, beef, canned","Manufacturers' data, 5 brands",MR,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+13-218,"Cauliflower, frozen, boiled in unsalted water","10 samples, 10 brands; boiled 4-9 minutes",DG,,"LGC, Frozen vegetable survey, 1985",,1.00,,,,
+17-226,Champagne,Mixed sample,QE, ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+12-143,"Cheese spread, flavoured","10 samples, assorted flavours",BL,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-148,"Cheese, cottage, plain, with additions","10 samples, mixed, e.g. with pineapple, Cheddar cheese",BL,50-233 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-179,"Cheese, dairy free hard cheese alternative",3 samples,BL,,"Milk Products and Eggs Supplement, 1989. Renamed from 'soya cheese'",,,,,6.25,
+12-473,"Cheesecake, fruit, low fat, individual","8 samples, 5 products",BR,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,,,6.38,
+12-474,"Cheesecake, not fruit, frozen","10 samples, 7 products, including chocolate, toffee and caramel varieties",BR,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,,,6.38,0.956
+14-067,"Cherries, canned in syrup, whole contents","10 samples, red and black, Drained proportion = 0.61 with stones and 0.47 without stones",FA,50-878 ,"LGC, Nutritional composition of fruit products, 1985-1986",,1.00,,,,
+50-1120,Cherry brandy,6 samples of different brands,QI,,"MW4, 1978",,1.00,1.09,33.3,,
+11-337,Chevra and chana chur,"Equal weights of the 2 varieties, Indian snack",AT,,Cereals and Cereal Products Supplement (1988),,,,,,
+19-118,"Chicken breast in crumbs, chilled, fried",4 samples,MCA,50-444 ,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-117,"Chicken breast in crumbs, chilled, raw",4 samples. 50-60% meat,MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-120,"Chicken breast, marinated with garlic and herbs, baked","7 samples. 70-95% meat, chilled and frozen",MR,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-116,"Chicken in crumbs, stuffed with cheese and vegetables, baked","7 samples, 5 brands. Fillings include cheese and broccoli, chilli, and mushroom. 40-53% meat, chilled/frozen",MI,337,"LGC, Nutritional analysis of meat and poultry products, 1994-1995",,1.00,,,,0.950
+19-193,"Chicken in sauce with vegetables, reheated","10 samples including chicken, tomato and mushroom casserole and chicken creole, chilled/frozen",MR,364,"LGC, Nutritional analysis of meat and poultry products, 1994-1995",,1.00,,,,0.950
+19-194,"Chicken in white sauce, canned","10 samples, 4 brands",MR, ,"Meat Products and Dishes Supplement, 1996; fatty acids analysed in LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,0.950
+19-123,"Chicken kiev, frozen, baked","5 samples, 4 brands. 45-60% meat",MI,338,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.950
+19-125,Chicken roll,"10 samples, 3 brands",MI, ,"Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fats, 1981/82",,1.00,,,,0.950
+18-451,"Chicken, meat only, fried, takeaway",10 samples from different outlets,MCA,266,"From Fatty Acids Supplement only. Full, unevaluated analytical data is available from the Food Standards Agency's library. See 18-327 for full composition of chicken portions, deep fried, meat and skin",,,,,,0.950
+19-207,"Chilli con carne, canned","Manufacturers' data, 10 brands",MR,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+15-074,"Chilli, vegetable, retail","6 samples, 5 brands; cooked in conventional and microwave ovens according to packet directions",DR,,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+17-086,"Chocolate, cooking",10 samples,SEA,464,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,0.960
+17-087,"Chocolate, no added sugar","10 samples, 2 brands",SEA,,"RHM, Nutrient analysis of selected foods, 1995",,1.00,,,,
+17-342,"Chutney, mango, oily",10 assorted samples,WCG,50-1158 ,"Miscellaneous Foods Supplement, 1994","Non-oily mango chutney contains 0.3g protein, 0.2g fat, 61.3g carbohydrate (48.6g sugar), 233kcal and 993kJ energy per 100g",1.00,,,,
+17-344,"Chutney, mixed fruit","10 samples, 6 brands; assorted fruits",WE,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+16-251,"Clams, canned in brine, drained",Literature sources,JM,,"Wu Leung et al. (1972) Food composition table for use in East Asia, and Exler (1987) Composition of foods: finfish and shellfish products, raw, processed and prepared",,N,,,,
+16-253,"Cockles, bottled in vinegar, drained","10 samples, 5 brands",JM,,"Fish and Fish Products Supplement, 1993",,0.47,,,,
+17-003,Cocoa butter alternative,"Analysis and literature sources; mixture of cocoa butter equivalent, replacer and substitute",OE,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+14-819,Coconut cream,Literature sources. Liquid from grated coconut kernel,GA,,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+14-872,"Coconut, creamed block","7 samples, 2 brands; block of dried kernel",GA,14-817 50-978 ,"LGC, Fruit and vegetables, 1989-1990; selenium from Analysis of foods for Selenium 1994.",,1.00,,,5.30,0.956
+16-030,"Cod, in parsley sauce, frozen, boiled","10 samples, 4 brands; boiled in bag for 20 minutes",JA,,"LGC, Analytical survey of fish and fish products, 1991-1992",,1.00,,,,
+16-029,"Cod, smoked, poached in milk, butter added","Samples poached in milk, butter added",JA,,"Fish and Fish Products Supplement, 1993",,1.00,,,,
+17-545,Coffee and chicory essence,7 bottles of the same brand (CAMP),PAA,17-162 50-1055 ,"As MW6, Manufacturer's data, McCormick Europe condiment Division, Sep 2000",,1.00,,,,
+12-888,"Coffee whitener liquid, with skimmed milk and non milk fat","4 samples, 2 brands",BAR,94,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.960
+12-889,Coffee whitener with glucose syrup and vegetable fat,"4 samples, 2 brands",BAR,95,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.960
+15-079,"Coleslaw, with vinaigrette, retail",Recipe from manufacturer,DR,,As Vegetable Dishes Supplement 1992,,1.00,,,,
+17-255,Consomme,"6 samples, 6 brands, including beef, game and chicken",WAC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-126,Corn and starch snacks,"20 samples, 6 brands including Skips",SNC,17-429 ,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993; fatty acids calculated from Fatty Acid Supplement, 1998 (17-429) proportions",,1.00,,,,
+17-296,Cranberry sauce,"8 samples, 4 brands",WC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+12-341,"Cream substitute, whipping","4 samples, including Elmlea",BJS,12-127 12-846 50-223 ,"LGC, Nutrient analysis of ‘other’ milk and cream, 1998. Fatty acids from Fatty Acid Supplement (1998) 12-846",,1.00,1.00,,6.38,0.951
+12-121,"Cream, half, UHT",5 samples (Sainsbury's),BJP,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-897,"Cream, non-dairy, UHT, canned spray","5 samples, 4 brands",BJS,112,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.960
+12-122,"Cream, single, UHT","8 samples, 4 brands",BJP,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-114,"Cream, soured, fresh","8 samples, 4 brands",BJC,50-213 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-120,"Cream, sterilised, canned","13 cans, 6 brands",BJL,50-217 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-123,"Cream, whipping, UHT","10 samples, 5 brands",BJP,,"Milk Products and Eggs Supplement, 1989",,,,,,
+50-1121,Curacao,4 samples of different brands,QI,,"MW4, 1978",,1.00,1.05,27.8,,
+19-168,"Curry, beef, canned","Manufacturers' data, 11 brands including beef curry and vegetables",MR,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+15-115,"Curry, gobi aloo sag, retail","Cauliflower, onion, potato, spinach and tomato. Recipe from manufacturer",DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-156,"Curry, vegetable, takeaway","12 samples purchased from take-away outlets; curry only, no rice",DR,,"Vegetable Dishes Supplement, 1992 (there are fatty acid figures for various vegetable currys in Fatty Acid supplement (1998) 15-357, 15-355, 15-356, but the figures have not been integrated due to the large variations in values)",,1.00,,,,
+12-233,"Dessert powder, instant","10 samples, 2 types, assorted flavours",BR,50-279 11-313 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+11-427,"Desserts, rice, with fruit, individual, chilled","7 samples, 2 brands; apple, strawberry, and raspberry. Rice pudding dessert with puréed
+f ruit",AS,76,"Campden and Chorleywood FRA, Nutrient analysis of yoghurts, fromage frais and chilled desserts, 1998",,1.00,,,6.25,0.950
+11-656,"Doughnuts, custard-filled",Recipe,AP,11-241 ,"Recipe, proportions from dissection of shop bought samples, as Cereals and Cereal Products Supplement 11-241",,1.00,,,,
+17-176,Dr Pepper,Literature sources,PCA,,"Ref. Cutrufelli and Matthews, 1986",,1.00,,,,
+12-426,"Dream Topping, made up with semi-skimmed milk",Recipe,BR,12-230 50-221 ,Recipe as Milk Products and Eggs Supplement 12-230,,1.00,,,,
+12-425,"Dream Topping, made up with skimmed milk",Recipe,BR,12-231 ,Recipe as Milk Products and Eggs Supplement 12-231,,1.00,,,,
+12-424,"Dream Topping, made up with whole milk",Recipe,BR,12-229 50-220 ,Recipe as Milk Products and Eggs Supplement 12-229,,1.00,,,,
+12-228,"Dream Topping, powder",10 samples (Birds),BR,11-300 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+17-301,"Dressing, 'fat free', assorted flavours",9 samples of the same brand (Kraft),WCG,,"RHM Technology, Nutrient analysis of selected foods, 1995",,1.00,,,,
+17-304,"Dressing, low fat, assorted flavours",Manufacturer's data (Heinz),WC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-307,"Dressing, thousand island, reduced calorie","8 samples, 3 brands",WC, ,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+16-174,"Eel, jellied",10 samples from assorted outlets. Jelly included in analysis,JC, ,"LGC, Nutritional survey fish and fish products, 1986-1987",,0.95,,,,0.900
+17-553,"Fat spread (20-25% fat), not polyunsaturated",20 samples including Gold Lowest and Outline. Fat data from TRANSFAIR,OA,17-028 17-476 12-260 50-315 ,"Miscellaneous Foods Supplement, 1994;  fatty acids from Fatty Acids Supplement (1998) 17-476",,1.00,,,6.38,0.956
+17-029,"Fat spread (20-25% fat), polyunsaturated",Manufacturers' data on own brands,OA,17-433 ,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+12-913,"Fruit fool, retail, individual","8 samples, 3 brands including strawberry, 
+banana, raspberry, apricot, and gooseberry",BR,155,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.950
+17-071,Fruit spread,"8 samples, 4 brands; assorted flavours",SC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-359,Garlic puree,"8 samples, 4 brands",WY,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+19-103,"Garlic sausage, ready to eat","10 samples, 8 brands including French and German style. 65-90% meat",MI,,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,
+17-178,"Ginger ale, dry","10 samples, 5 brands",PCA,,"LGC, Alcoholic beverages, soft drinks and tea and coffee survey, 1983-1984",,1.00,,,,
+14-104,"Gooseberries, dessert, canned in syrup, whole contents","4 samples, 2 brands",FA,50-898 ,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+13-251,"Gourd, kantola, canned, drained","LGC; 9 samples, 4 brands. Rinsed",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.68,,,,
+13-253,"Gourd, karela, canned, drained","10 samples, 4 brands. Rinsed",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.63,,,,
+13-257,"Gourd, tinda, canned, drained","10 samples, 5 brands. Rinsed",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.61,,,,
+14-274,Grape juice concentrate,"5 samples, red and white juice, 65.6 Brix; imported commercial concentrate",FC,,"LGC, The nutritional composition of fruit juice, 1984",,1.00,,,,
+14-276,"Grapefruit juice concentrate, unsweetened","8 samples, 50.4 Brix; imported commercial concentrate",FC,,"LGC, The nutritional composition of fruit juice, 1984",,1.00,,,,
+14-108,"Grapefruit, canned in syrup, whole contents",10 samples.  Drained proportion = 0.52,FA,50-902 ,"MW4, 1978",,1.00,,,,
+14-120,"Guava, canned in syrup, whole contents",10 samples. Drained proportion = 0.62,FA,50-907 ,"MW4, 1978. Values revised for Fruit and Nuts Supplement, 1992",,1.00,,,,
+11-251,Halva,"Greek sweet, 10 assorted samples",AP,,"Cereals and Cereal Products Supplement, 1988",,,,,,
+11-252,Halwa,"Asian sweet, 5 samples, assorted colours and flavours",AP,,Cereals and Cereal Products Supplement  1988,,,,,,
+19-133,"Ham and pork, chopped, canned",10 samples,MI,50-513  ,"As Meat Products and Dishes Supplement, 1996 and Fatty Acid Supplement, 1998",,1.00,,,,0.950
+19-024,"Ham, canned","10 samples, 8 brands",MI,50-360  ,"As Meat Products and Dishes Supplement, 1996 and Fatty Acid Supplement, 1998",,1.00,,,,0.930
+19-025,"Ham, Parma",Suppliers' data,MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-026,"Ham, premium","10 samples, 7 brands; loose and prepacked including honey glazed and smoked ham. No added water",MI,304,"LGC, Nutrient analysis of foods important in elderly people, 1994",,1.00,,,,0.910
+16-182,"Herring, canned in tomato sauce, whole contents","10 samples, 4 brands",JC,,"LGC, Analytical survey of fish and fish products, 1991-1992",,1.00,,,,
+16-181,"Herrings, dried, salted, weighed with bones and skin",Calculated from dried 16-180,JC,,"Fish and Fish Products Supplement, 1993",,0.50,,,,
+16-180,"Herrings, flesh only, dried, salted","Samples purchased whole from West Indian outlets, flesh only",JC,,"Fish and Fish Products Supplement, 1993",,1.00,,,,
+17-502,Horlicks LowFat Instant powder,Manufacturer's data (SmithKline Beecham),PAA,50-1067 ,As Miscellaneous Foods Supplement 17-502 - Manufacturer's data (SmithKline Beecham),,1.00,,,6.25,0.945
+17-563,"Horlicks LowFat Instant powder, made up with water",Calculated from 32g powder to 200ml water,PAA,,Recipe as MW5 50-1068,,1.00,,,,
+17-315,Hot pepper sauce,"7 samples, 3 brands (Tabasco, Encona, Calypso)",WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+12-481,"Ice cream, dairy free/soya alternative","8 samples, 4 products, including Swedish Glace ice cream",BP,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,0.78,,5.70,0.956
+12-479,"Ice cream, dairy, chocolate","10 samples, 4 products",BP,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,0.63,,6.38,0.945
+12-205,"Ice cream, dairy, flavoured","17 samples, assorted flavours",BP,50-268 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-392,"Ice cream, dairy, premium","10 samples, 5 brands",BP,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999; inorganics and water soluble vitamins estimated from dairy ice cream, vanilla",,1.00,0.85,,6.25,0.956
+12-477,"Ice cream, non-dairy, chocolate","14 samples, 8 products",BP,,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,0.54,,6.38,0.956
+12-478,"Ice cream, non-dairy, fruit flavoured","14 samples, 9 products, including raspberry ripple and strawberry flavoured",BP,12-207 ,"ADAS Laboratories, Nutrient analysis of ice creams and desserts, 1999",,1.00,0.61,,6.38,0.956
+17-052,"Ice Magic sauce, assorted chocolate flavours",9 samples of the same brand,WY,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+12-428,"Instant dessert powder, made up with semi-skimmed milk",Recipe,BR,12-235 ,Recipe as Milk Products and Eggs Supplement 12-235,,1.00,,,,
+19-224,"Irish stew, canned","10 samples, 2 brands",MR,,"Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fat, 1981-1982",,1.00,,,,
+13-260,"Jackfruit, canned, drained","10 samples, 4 brands",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,N,,,,
+17-058,Jaggery,5 assorted samples,SC,50-1003 ,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-072,"Jam, no added sugar",Analysis and manufacturers' data,SC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+12-239,"Jelly, made with semi-skimmed milk",Recipe,BR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-238,"Jelly, made with whole milk",Recipe,BR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+19-104,Kabana,Australian smoked pork sausage. Literature sources and manufacturers' data,MI,,"Cashel et al. (1989) Composition of Foods, Australia, volume 1, and manufacturers' data",,1.00,,,,
+18-456,"Kidney, lamb, grilled",10 samples from different outlets,MG,286,"This data is from Fatty Acids Supplement. Full, unevaluated analytical data is available from the Food Standards Agency's library",,1.00,,,,0.750
+14-126,"Kumquats, canned in syrup, whole contents",Literature sources:,FA,,"Wu Leung et al. (1972) Food composition table for use in East Asia, Food and Agriculture Organization and US Department of Health",,1.00,,,,
+13-093,"Lentils, canned in tomato sauce, re-heated","10 samples, 2 brands",DB,,"LGC, Canned and other processed vegetable products survey, 1985-1986",,1.00,,,,
+17-113,Liquorice shapes,"9 samples, 4 brands",SEC,17-445 ,"LGC, Nutritional analysis of foods for pre-school children, 1992; fatty acids from Fatty Acid Supplement, 1998 (17-445)",,1.00,,,,0.960
+14-141,"Loquats, canned in syrup, whole contents",Literature sources,FA,,"Wu Leung et al. (1972) Food composition table for use in East Asia, Food and Agriculture Organization and US Department of Health",,1.00,,,,
+13-272,"Lotus tubers, canned, whole contents",Literature sources,DG,,"Wu Leung et al. (1972) Food composition table for use in East Asia, Food and Agriculture Organization and US Department of Health",,1.00,,,,
+19-135,"Luncheon meat, canned","10 samples, 9 brands",MI,50-515  ,"As Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,0.930
+14-144,"Lychees, canned in syrup, whole contents",Analysis and literature sources. Drained proportion = 0.50,FA,50-913 ,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+12-276,"Macaroni cheese, canned",10 samples of the same brand (Heinz),BV,,"Milk Products and Eggs Supplement, 1989",,,,,,
+16-421,"Mackerel, canned in brine","4 samples, 3 products",JC,,"DH, Nutrient analysis of fish and fish products, 2013",,0.62,,,6.25,0.900
+16-198,"Mackerel, canned in tomato sauce, whole contents","10 samples, 4 brands; whole contents, fillets",JC,,"LGC, Analytical survey of fish and fish products, 1991-1992",,1.00,,,,
+17-127,Maize and rice flour snacks,20 samples of Frazzles and Bacon Streaks,SNC,486,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,0.960
+14-147,"Mandarin oranges, canned in syrup, whole contents","10 samples, 10 brands. Drained proportion = 0.56",FA,50-915 ,"LGC, Nutritional composition of fruit products, 1985-1986; and LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+14-280,"Mango juice, canned",Literature sources,FC,,"Wu Leung et al. (1972) Food composition table for use in East Asia, and Wu Leung et al. (1968) Food composition table for use in Africa",,1.00,,,,
+14-150,"Mangoes, ripe, canned in syrup, whole contents",10 samples,FA,50-918 ,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+17-442,"Margarine, catering","3 samples, 2 brands",OA,175,"This data is from Fatty Acids Supplement (1998) only. Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.960
+17-079,"Marmalade, no added sugar",Manufacturers' data,SC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+13-278,"Marrow, parwal, canned, drained","10 samples, 5 brands. Rinsed",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.61,,,,
+11-178,Matzos,"6 packets, Rakusens, Superfine, tea",AM,,MW4  1978,,,,,,
+11-344,"Meat buns, Chinese","2 assorted samples, barbecued pork",AT,,Cereals and Cereal Products Supplement (1988),,,,,,
+12-028,"Milk, condensed, skimmed, sweetened",10 cans (Fussells),BAR,50-198 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-031,"Milk, skimmed, dried, fortified, with vegetable fat","12 samples, 5 brands",BAR,50-201 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-311,"Milk, skimmed, sterilised","21 samples, summer (June/Sep) and winter (Jan/Mar)",BAE,12-007 ,"LGC, Nutrient analysis of ‘other’ milk and cream, 1998",,1.00,1.03,,6.38,0.945
+12-331,"Milk, soya, non-dairy alternative to milk, unsweetened, unfortified","10 samples, 8 brands",BC,12-042 12-841 50-209 ,"LGC, Nutrient analysis of other milk and cream, 1998. Fats as Fatty Aids Supplement 12-841. Vitamin K1 Bolton-Smith et al, Br J Nutr, 83, 2000",,1.00,0.99,,5.71,
+12-032,"Milk, whole, dried","Mixed sample, different brands",BAR,,"MW4, 1978. Vitamins calculated",,,,,,
+12-319,"Milk, whole, sterilised","10 samples, 2 brands, polybottles",BAK,12-017 12-834 50-193  50-193 ,"Majority of data from Milk Products and Eggs Supplement 12-017; additional data from LGC, Nutrient analysis of ‘other’ milk and cream, 1998 and ADAS, Nutrient analysis of pasteurised liquid milk, 1996. Fatty acids as 12-834",,1.00,1.03,,6.38,0.945
+17-202,"Milkshake syrup, concentrated","10 samples, 3 brands; assorted flavours",PCC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-204,"Milkshake syrup, concentrated, made up with semi-skimmed milk",Calculated from 40g syrup to 250ml milk,PAC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-203,"Milkshake syrup, concentrated, made up with whole milk",Calculated from 40g syrup to 250ml milk,PAC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+13-095,Miso,Fermented soya bean paste. Literature sources,DB,,"Haytowitz and Matthews (1984) Composition of foods: vegetables and vegetable products, raw, processed and prepared, and Wu Leung et al. (1972) Food composition table for use in East Asia, Food and Agriculture Organization and US Department of Health",,1.00,,,,
+17-128,Mixed cereal and potato flour snacks,"40 samples. Shaped and flavoured snacks based on maize, potato and wheat including cheese balls",SNB,17-430 ,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993. Fatty acid data for a single snack brand is available in 17-430",,1.00,,,,0.960
+12-400,"Mousse, chocolate","10 samples, 4 brands, fresh",BR,12-224 12-877 50-285  ,"Milk Products and Eggs Supplement, 1989; and Fatty Acids Supplement, 1998",,1.00,,,6.38,0.945
+11-782,"Muesli, luxury","10 samples, 9 products, including muesli with extra fruit and, or nuts",AI,11-138 ,"LGC, Nutrient survey of breakfast cereals, 2004",,1.00,,,5.83,
+15-207,"Mushroom Dopiaza, retail","Mushroom, onion, tomato and spices. Recipe from manufacturer",DR,,As Vegetable Dishes Supplement 1992,,1.00,,,,
+13-287,"Mushrooms, common, canned, re-heated, drained","10 samples, 3 brands. Whole and sliced button mushrooms",DG,,"LGC, Canned and other processed vegetable products survey, 1985",,0.55,,,,
+13-296,"Mushrooms, straw, canned, drained",Literature sources,DG,,"Vegetables, Herbs and Spices Supplement, 1991",,N,,,,
+16-258,"Mussels, canned and bottled, drained","10 samples, in vinegar and brine",JM,,"6 samples, 6 products, frozen and chilled",,0.59,,,,
+11-428,"Nachos, cheese, takeaway","10 samples from different outlets, nachos 
+with melted cheese",AT,79,"Aspland and James Ltd, 1997 'Nutrient analysis of ethnic and takeaway foods'.",,1.00,,,6.25,0.950
+14-888,"Nuts and raisins, mixed","Calculated as raisins 37%, peanuts 36%, hazelnuts 12%, brazil nuts 11 % and almonds 4%",GA,14-828 ,"Fruit and Nuts Supplement, 1992. Proportions as Fruit and Nuts Supplement 14-828",,1.00,,,,
+17-434,"Oil, blackcurrant seed",9 samples,OC,186,"Data from Fatty Acid Supplement only (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.960
+17-435,"Oil, borage",12 samples,OC,187,"Data from Fatty Acids Supplement only (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,1.00,,,,0.960
+13-303,"Okra, canned, drained","10 samples, 6 brands. Rinsed",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.63,,,,
+13-310,"Onions, pickled, cocktail/silverskin, drained","10 samples, 8 brands",DG,50-798 ,"Vegetables, Herbs and Spices Supplement, 1991",,0.59,,,,
+14-284,"Orange juice concentrate, unsweetened, commercial","17 samples, 58.4 Brix; imported commercial concentrate",PE,,"LGC, The nutritional composition of fruit juice, 1984",,1.00,,,6.25,
+17-129,Oriental mix,Literature sources,SNC,,Ref. Cutrufelli and Pehrsson (1991),,1.00,,,,
+17-321,Oyster sauce,10 samples; assorted types,WC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+15-227,"Pakora/bhajia, onion, retail, takeaway",14 samples purchased from take-away outlets,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+50-561,Pancake roll,"18 samples, 12 shops.  Vegetable and beansprout filling",MR,,"MW5, 1991",,1.00,,,,
+19-249,"Pancakes, beef, frozen, shallow-fried in vegetable oil","Coated crispy pancakes. 4 samples, 2 brands. 15-16% meat",MI,375,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.950
+19-250,"Pancakes, chicken, frozen, shallow-fried in vegetable oil",Coated crispy pancakes. 4 samples of the same brand.  10% meat,MI,376,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.950
+14-182,"Papaya, canned in juice, whole contents",10 samples. Drained proportion = 0.59,FA,50-937 ,"MW4, 1978",,1.00,,,,
+11-356,"Pasta, spaghetti, canned in bolognese sauce",10 samples of the same brand (Heinz),AT,,Cereals and Cereal Products Supplement (1988),,,,,,
+19-142,Pastrami,Suppliers' data including sliced and wafer thin pastrami,MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+11-338,"Pastries, Chinese, flaky",3 assorted samples with bean and vegetable paste filling,AT,,Cereals and Cereal Products Supplement (1988),,,,,,
+19-144,"Pate, liver, in a tube","10 samples, 6 brands",MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+16-297,"Pate, mackerel, smoked","6 samples, 5 brands",JR,,"LGC, Analytical survey of fish and fish products, 1991-1992",,1.00,,,,
+15-343,"Pate, vegetable","5 samples, 4 brands; assorted soya, cereal and vegetable based",DR,15-350 ,"LGC, Fruit and vegetables, 1989-1990; fatty acids from Fatty Acid supplement 15-350",,1.00,,,,0.880
+14-185,"Peaches, dried",No stones,FA,,"MW4, 1978. Values updated for Fruit and Nuts Supplement, 1992",,1.00,,,,
+14-186,"Peaches, dried, stewed with sugar","Calculated from 450g fruit, 770g water, 54g sugar",FA,,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+14-187,"Peaches, dried, stewed without sugar","Calculated from 450g fruit, 770g water",FA,,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+14-830,"Peanut butter, wholegrain","7 samples, 2 brands; peanuts, oil and salt only",GA,,"LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+14-198,"Pears, canned in syrup, whole contents","10 samples, 8 brands.  Drained proportion = 0.61",FA,50-946 ,"LGC, Nutritional composition of fruit products, 1985-1986; and LGC, Fruit and vegetables, 1989-1990",,1.00,,,,
+13-139,"Peas, petit pois, canned, drained","8 samples, 5 brands",DF,,"LGC, Fruit and vegetables, 1989-1990",,0.66,,,,
+13-140,"Peas, processed, canned, re-heated, drained","10 samples, 7 brands",DF,50-736 ,"LGC, Canned and other processed vegetable products survey. 1985",,0.65,,,6.25,
+13-136,"Pease pudding, canned, re-heated, drained","10 samples, 3 brands",DF,,"LGC, Canned and other processed vegetable products survey, 1985",,1.00,,,,
+18-454,"Pheasant, meat only, casseroled",3 samples,MCK,280,"RHM, Fatty acids in foods, 1993",,,,,,0.950
+17-348,"Pickle, chilli, oily",10 assorted samples; whole contents,WE,,"Immigrant Foods Supplement, 1985",,1.00,,,,
+17-349,"Pickle, lime, oily",10 assorted samples; whole contents,WE,,"Immigrant Foods Supplement, 1985",,1.00,,,,
+17-350,"Pickle, mango, oily",10 assorted samples; whole contents,WE,,"Immigrant Foods Supplement, 1985",,1.00,,,,
+14-098,"Pie filling, fruit, assorted flavours","10 samples, 7 brands.",FA,50-893 ,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+19-053,"Pie, Bridie/Scotch, individual",10 samples,MI,,"Meat Products and Dishes Supplement, 1996; fatty acids analysed in LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,
+19-062,"Pie, pork and egg","10 samples, 8 brands including prepacked",MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+16-201,"Pilchards, canned in tomato sauce, whole contents","10 samples, 6 brands",JC,50-621  ,"DH, Nutrient analysis of fish and fish products, 2013",,1.00,,,,0.900
+14-287,"Pineapple juice concentrate, unsweetened, commercial","13 samples, 56.5 Brix; imported commercial concentrate",PE,,"LGC, The nutritional composition of fruit juice, 1984",,1.00,,,,
+11-554,"Pizza, cheese and tomato, French bread, retail","Cooked, 10 samples, 3 brands",AE,,"RHM, Nutrient analysis of pizzas, 1995, Food Surveillance Information Sheet No.68",,1.00,,,6.25,0.956
+11-555,"Pizza, cheese and tomato, takeaway","20 samples, 7 brands, thin base and deep pan",AE,11-429 11-431 ,"Average of thin base and deep pan, RHM, Nutrient analysis of pizzas, 1995, Food Surveillance Information Sheet No.68,  fatty acids from  Fatty Acids Supplement (1998) 11-429,11-431",,1.00,,,6.25,0.956
+15-256,"Pizza, tomato, wholemeal, homemade",Recipe from review of recipe collection,DR,,As Vegetable Dishes Supplement 1992,,1.00,,,,
+14-219,"Plums, canned in syrup, whole contents","10 samples, 7 brands; red, golden and Victoria; no stones",FA,50-954 ,"LGC, Nutritional composition of fresh fruit, 1985-1986",,1.00,,,,
+19-109,Polony,24 samples,MI,50-519 ,"MW4, 1978. Values reviewed for Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-146,Pork haslet,"10 samples, 6 brands. 69% meat",MI,352,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.930
+19-065,"Pork pie, sliced",10 samples of own brands from the delicatessen,MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+19-027,"Pork shoulder, cured, slices","8 samples, 7 brands",MI,305,"LGC, Analytical survey of meat products, 1990-1991",,1.00,,,,0.910
+19-148,Pork slices,9 samples. 100% meat,MI,,"LGC, Nutritional analysis of meat and poultry products, 1994-1995",,1.00,,,,
+17-140,Potato and corn sticks,"20 samples, 9 brands; mixed plain and flavoured e.g. chipsticks, crunchy sticks",SNB,492,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,0.960
+17-141,Potato and tapioca snacks,"20 samples, 3 brands; assorted types e.g. Waffles, Bitza Pizza, Wickettes",SNB,493,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,0.960
+17-134,"Potato crisps, crinkle cut","20 samples, 3 brands; mixed plain and flavoured",SNA,,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,
+17-135,"Potato crisps, jacket","20 samples, 7 brands; mixed plain and flavoured",SNA,,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,
+17-137,"Potato crisps, square","20 samples, 2 brands; mixed plain and flavoured",SNA,,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,
+17-139,"Potato crisps, thick, crinkle-cut","20 samples, 5 brands; mixed plain and flavoured",SNA,,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,
+17-138,"Potato crisps, thick-cut","20 samples, 2 brands; mixed plain and flavoured",SNA,,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,
+13-424,"Potato fritters, battered, baked",2 samples of different brands,DAR,13-870 ,"From LGC 'Nutritional analysis of foods for pre-school children' 1992,  and Fatty Acids Supplement 13-870",,1.00,,,6.25,0.956
+13-007,"Potatoes, new, canned, re-heated, drained","10 samples, 4 brands",DAE,50-663 ,"LGC, Canned and other processed vegetable products survey, 1985",,0.65,,,,
+17-145,Pretzels,Literature sources,SNC,,Ref. Cutrufelli and Pehrsson (1991),,1.00,,,,
+14-238,"Prunes, canned in syrup, whole contents","11 samples, 6 brands; stones removed, Drained proportion = 0.64",FA,50-956 ,"LGC, Fruit and vegetables, 1989-1990",,0.92,,,,
+17-147,Puffed potato products,"20 samples, 3 brands; assorted flavours e.g. Quavers, Snaps, Chinese style crackers",SNA,497,"LGC, Survey of the Nutritional Composition of savoury snacks and nuts, 1993",,1.00,,,,0.960
+18-466,"Rabbit, stewed, meat and fat",4 samples,MEC,18-388 281 ,"RHM, Fatty acids in foods, 1993. Fatty acid data only. Data not integrated with Meat Poultry and Game Supplement, Rabbit, 18-388.",,,,,,0.950
+14-248,"Raspberries, canned in syrup, whole contents",Mixed sample.  Drained proportion = 0.52,FA,50-960 ,"MW4, 1978. Values revised for Fruit and Nuts Supplement, 1992",,1.00,,,,
+14-247,"Raspberries, frozen","10 samples, 5 brands",FA,,"LGC, Nutritional composition of fresh fruit, 1985-1986",,1.00,,,,
+15-264,"Ratatouille, retail","9 frozen samples, 3 brands; shallow fried then simmered for 35-40 minutes",DR,,"Vegetables, Herbs and Spices Supplement, 1991",,1.00,,,,
+17-325,Redcurrant jelly,"7 samples, 5 brands",WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992; and industry data, 2013",,1.00,,,,
+14-255,"Rhubarb, canned in syrup, whole contents","10 samples, 6 brands.  Drained proportion = 0.56",FA,50-964 ,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+17-633,"Rice cakes, plain, low salt","10 samples, 5 products",SN,11-618 ,"Direct Laboratories, Nutrient analysis catch up project, 2003",,1.00,,,5.95,0.820
+11-207,"Rice flour cakes, glutinous,  Chinese",3 assorted samples,AN,,Cereals and Cereal Products Supplement 1988,,1.00,,,,
+17-181,Root beer,Literature souces,PCA,,Ref. Cutrufelli and Matthews (1986),,1.00,,,,
+17-205,"Rosehip syrup, concentrated","9 samples, 4 brands",PCC,50-1086 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-206,"Rosehip syrup, concentrated, made up",Calculated from 50g syrup to 200ml water,PCC,,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+15-286,"Salad, bean with French dressing, retail",Assorted beans. Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-288,"Salad, carrot and nut with French dressing, retail",Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-289,"Salad, carrot and nut with mayonnaise, retail",Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-290,"Salad, Florida, retail","White cabbage, celery and fruit. Recipe from manufacturer",DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-298,"Salad, potato, with reduced calorie dressing, retail",Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-877,"Salad, vegetable, canned",Recipe from literature sources. Dissection of shop-bought samples,DR,15-595 ,Updated 2014,,1.00,,,,
+15-304,"Salad, Waldorf, retail",Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+17-328,Sandwich spread,Analysis and manufacturers' information,WC,17-454 ,"As Miscellaneous Foods Supplement, 1994 (17-328) with fatty acids from Fatty Acid Supplement, 1998 (17-454)",,1.00,,,,0.960
+17-331,"Sauce, dry mix","7 samples, 3 brands; including parsley, onion and bread",WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-332,"Sauce, dry mix, made up",Calculated from 60g powder to 568ml milk,WC,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+12-302,"Sauce, white,  packet mix, dry","15 samples, 2 brands",BV,,"Milk Products and Eggs Supplement, 1989",,,,,,
+19-096,"Sausage, Bierwurst",Cooked smoked sausage. Literature sources and manufacturers' data,MI,,"Anderson et al. (1986) Agriculture Handbook No. 8-13, and manufacturers' data",,1.00,,,,
+19-097,"Sausage, Bratwurst, cooked",German pork sausage. Literature sources and manufacturers' data,MI,,"Richardson et al. (1980) Agriculture Handbook No. 8-7, and manufacturers' data",,1.00,,,,
+19-098,"Sausage, Cervelat",Swiss smoked sausage. Literature sources,MI,,"Voorlichtingsbureau voor de Voeding (1993), Nevo Tabel, and Feinberg et al. (1991) Repertoire General des Aliments, Table de Composition",,1.00,,,,
+19-105,"Sausage, Knackwurst",German sausage. Literature sources,MI,,"Souci Fachmann Kraut (1990) Food composition and nutrition tables 1989/90, 4th edition",,1.00,,,,
+19-107,"Sausage, Mortadella",Italian pork sausage. Literature sources and manufacturers' data,MI,,References dated 1989 - 1993 and manufacturers' data,,1.00,,,,
+19-087,"Sausages, pork and beef, chilled, raw","10 samples, 7 brands",MI,,"CCFRA, Programme of mini-surveys: survey of sausages, 2003",,1.00,,,,
+19-089,"Sausages, pork and beef, frozen, raw","10 samples, 4 brands",MI,,"CCFRA, Programme of mini-surveys: survey of sausages, 2003",,1.00,,,,
+19-088,"Sausages, pork and beef, grilled","10 samples, chilled",MI,,"CCFRA, Programme of mini-surveys: survey of sausages, 2003",,1.00,,,,
+19-295,"Sausages, turkey, raw",1 packet,MI,331,"This data is from Fatty Acids Supplement. Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.950
+16-305,"Seafood pasta, retail",Calculated from manufacturers' proportions,JR,,"Fish and Fish Products Supplement, 1993",,1.00,,,,
+17-235,"Sherry, dry",1 sample,QF,50-1114 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994 (17-235). Additional data from 50-1114",,1.00,0.99,3.3,,
+17-237,"Sherry, sweet",1 sample,QF,50-1116 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994 (17-237). Additional data from 50-1116",,1.00,1.01,9.6,,
+17-182,"Soda, club",Literature sources,PCA,,Ref. Cutrufelli and Matthews (1986),,1.00,,,,
+17-183,"Soda, cream",Literature sources,PCA,,Ref. Cutrufelli and Matthews (1986),,1.00,,,,
+17-261,"Soup powder, instant, reduced calorie, assorted flavours","10 packets, 4 brands",WAE,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-262,"Soup powder, instant, reduced calorie, assorted flavours, as served",Calculated from 37g powder to 190ml water,WAE,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-268,"Soup, minestrone, dried","10 packets, 4 brands",WAE,50-1138 ,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-269,"Soup, minestrone, dried, as served",Calculated from 45g soup powder to 570ml water,WAE,50-1139 ,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+17-273,"Soup, oxtail, dried","10 packets, 5 brands",WAE,50-1140 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-274,"Soup, oxtail, dried, as served",Calculated from 45g soup powder to 570ml water,WAE,50-1141 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-279,"Soup, tomato, cream of, canned, condensed","7 cans, 2 brands",WAC,50-1129 ,"MW4, 1978. Values reviewed for Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-280,"Soup, tomato, cream of, canned, condensed, as served",Diluted with an equal volume of water,WAC,50-1130 ,"Miscelleanous Foods Supplement, 1994",,1.00,,,,
+17-281,"Soup, tomato, dried","10 packets, 4 brands; including cream of tomato",WAE,50-1142 ,"As Miscellaneous Foods Supplement, 1994 and Fatty Acid Supplement, 1998 (17-281)",,1.00,,,,0.950
+17-282,"Soup, tomato, dried, as served",Calculated from 58g soup powder to 570ml water,WAE,50-1143 ,"As Miscellaneous Foods Supplement, 1994 (17-282)",,1.00,,,,
+17-285,"Soup, vegetable, dried","10 packets, 5 brands",WAE,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-286,"Soup, vegetable, dried, as served",Calculated from 45g soup powder to 570ml water,WAE,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-287,"Soup, Wholesoup, canned",Analysis and manufacturer's information (Heinz); assorted varieties,WAC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+12-899,Soya dessert topping,"6 samples, 2 brands",BJS,114,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.950
+15-314,"Soya mince, granules",10 samples of the same brand (Cross and Blackwell),DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+13-347,"Spinach, canned, drained",Literature sources,DG,,"Vegetables, Herbs and Spices Supplement, 1991",,0.63,,,,
+17-246,"Spirits, 37.5% volume","Mean of brandy, gin, rum, whisky and vodka",QK,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+19-072,"Steak and kidney pudding, canned","10 samples, 4 brands",MI,19-291 ,"Meat products and dishes supplement, 1996",,1.00,,,,0.950
+19-049,"Steaklets, frozen, raw",10 samples,MI,,"Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,
+19-179,"Stew, beef, with dumplings, retail, cooked",Calculated from 68% beef stew and 32% dumplings,MR,,"LGC, Nutritional analysis of meat and poultry products, 1994-1995",,1.00,,,,
+19-152,"Stewed steak with gravy, canned","10 samples, 9 brands",MI,50-536 ,"Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,
+50-1101,"Stout, bottled",4 samples from different brewers,QA,,"MW4, 1978",,1.00,1.01,5.8,,
+50-1102,"Stout, extra",6 samples of the same brand,QA,,"MW4, 1978",,1.00,1.00,3.6,,
+17-220,"Stout, Mackeson",10 samples; canned and bottled,QA,,"LGC, Alcoholic beverages, soft drinks and tea and coffee, 1983-1984",,1.00,,,,
+14-262,"Strawberries, canned in syrup, whole contents","10 samples,  Drained proportion = 0.38",FA,50-986 ,"LGC, Nutritional composition of fruit products, 1985-1986",,1.00,,,,
+14-261,"Strawberries, frozen","6 samples, 3 brands",FA,,"Fruit and Nuts Supplement, 1992",,1.00,,,,
+17-536,Sunny Delight,Manufacturer's data. Average of Florida style and California style,PCC,,"Manufacturer's data (Proctor and Gamble), Proximate values -  total carbohydrate and its components, starch and sugars are expressed as their monosaccharide equivalents",,1.00,,,,
+13-367,"Sweetcorn, baby, canned, drained",Literature sources,DG,50-823 ,"Wu Leung et al. (1972) Food composition table for use in East Asia, Vitamin K1 from Bolton-Smith et al, Br.J. Nutr 83, 2000.",,0.53,,,,
+17-106,"Sweets, foam sweets",7 samples,SEC,,"LGC, Nutritional analysis of foods for pre-school children, 1992",,1.00,,,,
+17-066,"Syrup, golden, pouring",2 samples of the same brand,SC,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+17-067,"Syrup, maple",Literature sources,SC,,Ref. Cutrufelli and Pehrsson (1991),,1.00,,,,
+19-279,"Tagliatelle with ham, mushroom and cheese, retail, reheated","11 samples, 9 brands. 10-14% meat, chilled/frozen/longlife",MR,380,"Meat Products and Dishes Supplement, 1996",,1.00,,,,0.950
+15-317,"Tagliatelle, with vegetables, retail",Recipe from manufacturer,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+17-173,"Tea, lemon, instant powder",8 samples of the same brand (Lift),PAA,,"Miscelleanous Foods Supplement, 1994",,1.00,,,,
+17-174,"Tea, lemon, instant powder, with water",Calculated from 6g powder to 225ml water,PAC,,"Miscelleanous Foods Supplement, 1994",,1.00,,,,
+12-343,Tip Top dessert topping,4 samples,BJS,12-130 12-848 50-225 ,"LGC, Nutrient analysis of ‘other’ milk and cream, 1998; fatty acids from Fatty Acid Supplement (1998) 12-848",,1.00,1.05,,6.38,0.956
+17-375,"Tomatoes, sun dried","10 samples of different brands, including oil",DG,429,"Miscellaneous Foods Supplement, 1994",,1.00,,,,0.960
+19-154,Tongue slices,"7 samples of a mixture of chilled, canned and delicatessen tongue. 90-100% meat",MI, ,"LGC, Nutrient analysis of foods important in elderly people, 1994",,1.00,,,,
+19-153,"Tongue, canned","18 samples, lamb and ox tongue",MI,50-537 ,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+17-238,Tonic wine,10 samples; Sanatogen,QF,,"LGC, Alcoholic beverages, soft drinks and tea and coffee survey, 1983-1984; and Ref. Cutrufelli and Matthews, 1986",,1.00,,,,
+12-878,"Trifle, chocolate, individual ","5 samples, 2 brands",BR,12-252 158 ,Data from Fatty Acids Supplement (1998). Full unevaluated analytical data is available from Food Standards Agency's library,,,,,,0.950
+19-155,"Turkey roast, frozen, cooked",2 samples. 76% meat,MI,357,"Meat Products and Dishes Supplement, 1996",,1.00,,,,0.950
+19-156,Turkey roll,"10 samples, 8 brands",MI,,"Meat Products and Dishes Supplement, 1996; and LGC, Survey of dietary oils and fats, 1981-1982",,1.00,,,,
+19-158,"Turkey steaks in crumbs, frozen, grilled","4 samples, 3 brands. 38-49% meat",MI,,"Meat Products and Dishes Supplement, 1996",,1.00,,,,
+15-323,Vegebanger mix,"8 samples, 2 brands; assorted flavours",DR,15-349 ,"LGC, Fruit and vegetables, 1989-1990; fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,0.800
+15-324,"Vegebanger mix, made up with water",Calculated from 15-323 made up with water according to packet directions,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-327,"Vegebanger mix, made up with water and egg",Calculated from 15-323 made up with water and egg according to packet directions,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-328,"Vegebanger mix, made up with water and egg, fried in sunflower oil",Calculated from 15-327 using 15% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-329,"Vegebanger mix, made up with water and egg, fried in vegetable oil",Calculated from 15-327 using 15% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-325,"Vegebanger mix, made up with water, fried in sunflower oil",Calculated from 15-324 using 15% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-326,"Vegebanger mix, made up with water, fried in vegetable oil",Calculated from 15-324 using 15% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992 with fatty acid fractions calculated based on proportions from 15-349",,1.00,,,,
+15-332,Vegeburger mix,"10 samples, 6 brands",DR,15-348 ,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,0.800
+15-333,"Vegeburger mix, made up with water",Calculated from 15-332 made up with water according to packet directions,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-337,"Vegeburger mix, made up with water and egg",Calculated from 15-332 made up with water and egg according to packet directions,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-338,"Vegeburger mix, made up with water and egg, fried in sunflower oil",Calculated from 15-337 using 12% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-339,"Vegeburger mix, made up with water and egg, fried in vegetable oil",Calculated from 15-337 using 12% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-340,"Vegeburger mix, made up with water and egg, grilled",Calculated from 15-337 using 9% weight loss,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-334,"Vegeburger mix, made up with water, fried in sunflower oil",Calculated from 15-333 using 12% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-335,"Vegeburger mix, made up with water, fried in vegetable oil",Calculated from 15-333 using 12% weight loss and measured fat uptake,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-336,"Vegeburger mix, made up with water, grilled",Calculated from 15-333 using 9% weight loss,DR,,"As Vegetable Dishes Supplement, 1992.",,1.00,,,,
+15-330,"Vegeburger, retail, fried in vegetable oil","10 samples, 5 brands; soya and wheat protein based. Fried 4-5 minutes",DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+15-358,"Vegetable grill/burger, in crumbs, baked/grilled","6 samples, different brands including bean
+burgers and crispbakes",DR,434,"This data is from Fatty Acids Supplement only, full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.800
+15-362,"Vegetable kiev, baked","4 samples, 2 brands including cordon bleu and traditional style",DR,15-360 ,"Reviewed 2013. From RHM 'Nutrient analysis of manufactured foods for vegetarians' 1997, Food Surveillance Information Sheet No.118. Fats and fatty acids as FA supplement 15-360",,1.00,,,6.25,0.956
+15-342,"Vegetable pancake roll, Chinese style, takeaway",18 samples,DR,,"Vegetable Dishes Supplement, 1992",,1.00,,,,
+17-376,Vegetable puree,"6 samples, 3 brands",DG,,"Miscellaneous Foods Supplement, 1994",,1.00,,,,
+13-282,"Vegetables, mixed, canned, re-heated, drained","10 samples, 8 brands, Assorted varieties",DG,,"LGC, Canned and other processed vegetable products survey, 1985-1986",,0.67,,,,
+17-351,"Vegetables, mixed, pickled","9 samples, 4 brands",WE,,"LFRA, Nutrient analysis of miscellaneous foods, 1992",,1.00,,,,
+18-455,"Venison, meat only, casseroled",8 samples including diced and steaks,MEE,283,"RHM, Fatty acids in foods, 1993. This data is from Fatty Acids supplement only. Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.930
+17-240,"Vermouth, sweet",5 samples of different brands,QG,50-1118 ,"MW4, 1978. Values revised for Miscellaneous Foods Supplement, 1994 (17-240). Additional data from 50-1118",,1.00,1.05,16.4,,
+13-393,"Vine leaves, preserved in brine","5 samples, 2 brands. Soaked to remove brine",DG,,"Vegetables, Herbs and Spices Supplement, 1991",,1.00,,,,
+11-187,Water biscuits,3 brands,AM,11-417 ,"MW3, 1960",,1.00,,,,
+13-395,"Water chestnuts, canned, drained",Literature sources,DG,,"Haytowitz and Matthews (1986) Composition of foods: legumes and legume products, raw, processed and prepared, Agriculture Handbook No. 8-2, and Wu Leung et al. (1972) Food composition table for use in East Asia",,0.63,,,,
+17-151,Wheat crunchies,"20 samples, 3 brands; assorted flavours",SNC,500,"Miscellaneous Foods Supplement, 1994",,1.00,,,,0.960
+12-035,Whey,"Commercial ingredient, sweet whey, literature sources",BAR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-036,"Whey, dried","Commercial ingredient, sweet whey, literature sources",BAR,,"Milk Products and Eggs Supplement, 1989",,,,,,
+19-159,White pudding,6 samples,MI,50-538 ,"MW4 (1978). Values reviewed for Meat Products and Dishes Supplement, 1996",,1.00,,,,
+17-838,"White sauce, packet mix, made up with semi-skimmed milk",Recipe,WCD,17-576 ,Updated 2014,,1.00,,,,
+17-839,"White sauce, packet mix, made up with skimmed milk",Recipe,WCD,17-577 ,Updated 2014,,1.00,,,,
+17-840,"White sauce, packet mix, made up with whole milk",Recipe,WCD,17-575 ,Updated 2014,,1.00,,,,
+12-197,Yogurt powder,Commercial ingredient.  Calculation and manufacturer's data,BL,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-193,"Yogurt, drinking, UHT",5 samples (Ambrosia),BNS,50-251 ,"Milk Products and Eggs Supplement, 1989",,1.00,,,,
+12-187,"Yogurt, goats, whole milk","10 samples, 2 brands, from health food outlets",BNE,,"Milk Products and Eggs Supplement, 1989",,,,,,
+12-906,"Yogurt, reduced fat, frozen","2 samples, different brands",BNH,142,"This data is from Fatty Acids Supplement (1998). Full, unevaluated analytical data is available from the Food Standards Agency's library",,,,,,0.950
+12-907,"Yogurt, virtually fat free/diet, twin pot, fruit","5 samples, 2 brands",BNS,143,"Campden and Chorleywood FRA, Nutrient analysis of yoghurts, fromage frais and chilled desserts, 1998",,1.00,1.05,,6.38,0.945

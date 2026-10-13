@@ -1,0 +1,92 @@
+https://wasabi.uk.com/menu
+status: 200
+length: 254057
+kcal mentions: 5
+next_data: False
+
+== interesting links
+https://www.wasabi.uk.com/wp-content/uploads/2026/09/WAS_Nutritional_Guide_210926v3.pdf
+
+== kcal snippets
+                                     <div class="menu__allergens-filter-item menu__allergens-filter-item-under_600 | menu-d-flex">                                         <label for="under_600-filter"><input id="under_600-filter" type="checkbox" name="allergens_filter" value="under_600" />Under 600 kcal</label>                                     </div>                                                                     <div class="menu__allergens-filter-item menu__allergens-filter-item-vegan | 
+mon Matsuri Platter</span>                                                                             <div class="menu-item__description | ">Sushi Selection: Salmon Nigiri, Salmon Hosomaki, Salmon & Sesame Chumaki, Wakame Seaweed, Salmon Sashimi, Chives, served with Soy Sauce and Wasabi. Serves 4. Calories calculated by portion.</div>                                                                             <div class="menu-item__price-allergens">                                              
+                                               <span class="menu-item__title">Pokka Oolong Tea</span>                                                                             <div class="menu-item__description | ">This oolong tea has a deliciously rich oolong tea flavour and contains no sugar or calories.</div>                                                                             <div class="menu-item__price-allergens">                                                                    
+s="menu-item__title">Pokka Japanese Green Tea</span>                                                                             <div class="menu-item__description | ">A favourite in Japan, this tea is made from selected premium green tea leaves for an intense, leafy flavour, and contains no sugar, calories, or colourings.</div>                                                                             <div class="menu-item__price-allergens">                                                     
+                              <span class="menu-item__title">Diet Pepsi</span>                                                                             <div class="menu-item__description | ">With its light, crisp taste, Diet Pepsi gives you all the refreshment you need - with zero sugar and zero calories.</div>                                                                             <div class="menu-item__price-allergens">                                                                    
+
+== head
+<!doctype html>
+
+<!--[if lt IE 7]><html lang="en-GB" class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html lang="en-GB" class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html lang="en-GB" class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en-GB"><!--<![endif]-->
+
+	<head>
+		
+		<!-- <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="a61255c4-9541-4332-8058-8c9a6cc40961" data-blockingmode="auto" type="text/javascript"></script> -->
+
+		<meta charset="utf-8">
+
+				<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>- Wasabi | Sushi &amp; Bento</title>
+
+				<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="390">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+
+		<link rel="icon" type="image/png" sizes="32x32" href="https://www.wasabi.uk.com/wp-content/themes/wasabi/library/images/favicons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="https://www.wasabi.uk.com/wp-content/themes/wasabi/library/images/favicons/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-config" content="https://www.wasabi.uk.com/wp-content/themes/wasabi/library/images/favicons/browserconfig.xml">
+		<meta name="theme-color" content="#ffffff">
+
+		<link rel="pingback" href="https://www.wasabi.uk.com/xmlrpc.php">
+
+				<script type="text/plain" data-cookieconsent="preferences, statistics, marketing">
+	window.dataLayer = window.dataLayer || [];
+
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+
+	gtag("consent", "default", {
+		ad_personalization: "denied",
+		ad_storage: "denied",
+		ad_user_data: "denied",
+		analytics_storage: "denied",
+		functionality_storage: "denied",
+		personalization_storage: "denied",
+		security_storage: "granted",
+		wait_for_update: 500,
+	});
+	gtag("set", "ads_data_redaction", true);
+	gtag("set", "url_passthrough", true);
+</script>
+<script type="text/plain" data-cookieconsent="preferences, statistics, marketing">
+		(function (w, d, s, l, i) {
+		w[l] = w[l] || [];
+		w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+		var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l !== 'dataLayer' ? '&l=' + l : '';
+		j.async = true;
+		j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+		f.parentNode.insertBefore(j, f);
+	})(
+		window,
+		document,
+		'script',
+		'dataLayer',
+		'GTM-NPFBG3K'
+	);
+</script>
+<script type="text/javascript"
+		id="Cookiebot"
+		src="https://consent.cookiebot.com/uc.js"
+		data-implementation="wp"
+		data-cbid="a61255c4-9541-4332-8058-8c9a6cc40961"
+							async	></script>
+<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v28.6 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<link 

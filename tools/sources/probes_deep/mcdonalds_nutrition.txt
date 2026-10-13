@@ -1,0 +1,12 @@
+https://www.mcdonalds.com/gb/en-gb/good-to-know/nutrition-calculator.html
+status: 403
+length: 36
+kcal mentions: 0
+next_data: False
+
+== interesting links
+
+== kcal snippets
+
+== head
+HTTPError: HTTP Error 403: Forbidden

@@ -1,0 +1,12 @@
+https://www.chopstixnoodlebar.com/menu
+status: ERR
+length: 62
+kcal mentions: 0
+next_data: False
+
+== interesting links
+
+== kcal snippets
+
+== head
+URLError: <urlopen error [Errno -2] Name or service not known>

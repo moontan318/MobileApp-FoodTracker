@@ -1,0 +1,12 @@
+https://www.kfc.co.uk/nutrition-allergens
+status: ERR
+length: 42
+kcal mentions: 0
+next_data: False
+
+== interesting links
+
+== kcal snippets
+
+== head
+TimeoutError: The read operation timed out

@@ -1,0 +1,87 @@
+https://fiveguys.co.uk/menu/
+status: 200
+length: 143762
+kcal mentions: 0
+next_data: False
+
+== interesting links
+https://media.fiveguys.com/uk/2026/01/EURO-FGI-FOH12-Nutritional-information-EN-V091025-combined.pdf
+https://www.fiveguys.co.uk/nutritional-allergy-information/
+https://www.fiveguys.co.uk/wp-content/uploads/sites/30/2026/07/FGUK_FOH_kids-menu_price-update_standard-LH_A4_20251007.pdf
+https://www.fiveguys.co.uk/wp-content/uploads/sites/30/2026/08/FGUK_FOH_allergen_ingredient_nutrition_Myprotein_shake_DIGITAL_20260805.pdf
+
+== kcal snippets
+
+== head
+
+<!DOCTYPE html>
+<html class="no-js" lang="en-UK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Browser Theme Colors -->
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f6f6">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d21033">
+
+  <script>
+    // No js Fallback - Remove 'no-js', add 'js' to html el
+    ! function() {
+      var n = document.documentElement.classList;
+      n.contains('no-js') && (n.remove('no-js'), n.add('js'));
+    }();
+  </script>
+
+    <script>
+    window.dataLayer = window.dataLayer || [];
+  </script>
+
+      <!-- OneTrust Cookies Consent Notice start for fiveguys.co.uk -->
+<script type="text/javascript" src="https://cdn-ukwest.onetrust.com/consent/f7fb6b32-83e9-49af-841a-60558296f42b/OtAutoBlock.js" ></script>
+<script src="https://cdn-ukwest.onetrust.com/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="f7fb6b32-83e9-49af-841a-60558296f42b" ></script>
+<script type="text/javascript">
+  function OptanonWrapper() {
+    var iframe_embeds = document.querySelectorAll( '[data-embed-src]' );
+
+    // Enable iframe Embeds
+    if ( OnetrustActiveGroups.includes('C0003') ) {
+      if ( iframe_embeds && iframe_embeds.length ) {
+        iframe_embeds.forEach(function (el) {
+          var embed_src = el.getAttribute( 'data-embed-src' );
+
+          if ( embed_src && embed_src !== '' ) {
+            el.setAttribute( 'src', embed_src );
+          }
+        });
+      }
+    // Disable iframe Embeds
+    } else {
+      if ( iframe_embeds && iframe_embeds.length ) {
+        iframe_embeds.forEach(function (el) {
+          el.setAttribute( 'src', '' );
+        });
+      }
+    }
+  }
+</script>
+<!-- OneTrust Cookies Consent Notice end for fiveguys.co.uk -->
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-M96KZ7M');</script>
+<!-- End Google Tag Manager -->
+
+  <!-- Preload Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="alternate" hreflang="en" href="https://www.fiveguys.co.uk/menu/" />
+<link rel="alternate" hreflang="x-default" href="https://www.fiveguys.co.uk/menu/" />
+
+	<!-- This site is optimized with the Yoast SEO plugin v28.1 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<title>Five Guys Menu | Fresh Burgers, Fries, Shakes &amp; More!</title>
+	<meta name="description" content="Bur

@@ -4,15 +4,18 @@ An Android app for building recipes from weighed ingredients and working out the
 nutrition in whatever portion you eat.
 
 * **Recipes**: add ingredients with their weights. Search the built-in database of
-  10,000+ foods (works offline) or enter your own foods from a nutrition label.
+  11,000+ foods (works offline) or enter your own foods from a nutrition label.
 * **UK food database**: 2,886 UK foods from McCance and Widdowson's CoFID (the UK
   government's official food composition data) with UK names (aubergine, courgette,
   beef mince, crisps...), including takeaway dishes (chicken tikka masala, doner
   kebab, chip-shop chips, egg fried rice, Big Mac...). These are listed first; the
   USDA database fills the gaps, renamed to UK English with US-only brands removed.
   US words still work in search ("eggplant" finds aubergine).
-* **Restaurant menus**: Greggs, Costa (every size and milk) and LEON, from the
-  nutrition each chain publishes; log them as "1 item" or by size.
+* **Restaurant menus**, from the nutrition each chain publishes: McDonald's, KFC,
+  Burger King, Subway (6-inch or footlong), Nando's, Popeyes, Greggs, Costa (every
+  size and milk) and LEON. Log them as "1 item" or by size. KFC, Nando's and
+  Popeyes don't publish item weights, so their items are per item and can be
+  logged to the diary but not used as recipe ingredients.
 * **Portions**: enter the weight you're eating and the app scales every ingredient.
   For example, a recipe of 200 g potatoes + 200 g beef (400 g total) eaten as a 200 g
   portion shows the nutrition of 100 g potatoes + 100 g beef.
@@ -66,7 +69,9 @@ Requires JDK 17 and the Android SDK (API 35).
     (Office for Health Improvement and Disparities, Open Government Licence v3.0).
   * `usda/`: USDA National Nutrient Database for Standard Reference, Release 28
     (public domain), converted by `tools/convert_sr28.py`.
-  * `raw/`: menu nutrition published by Greggs, Costa and LEON on their websites.
+  * `raw/`: menu nutrition published by the restaurant chains on their websites
+    (data feeds, menu pages and the KFC and Subway nutrition PDFs). McDonald's, KFC
+    and Subway are downloaded through a headless Firefox session.
   * `tools/cofid_portion_links.tsv` gives common UK foods the USDA household
     measures ("1 medium") of the equivalent USDA food.
 

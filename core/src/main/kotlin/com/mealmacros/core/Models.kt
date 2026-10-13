@@ -29,7 +29,11 @@ data class Food(
     fun defaultPortion(): Portion? =
         portions.firstOrNull { it.description == "item" }
             ?: portions.firstOrNull { it.description.startsWith("medium", ignoreCase = true) }
+            ?: portions.firstOrNull().takeIf { isRestaurant } // e.g. a 6-inch sub
             ?: portions.firstOrNull { it.description.contains("medium", ignoreCase = true) }
+
+    /** Menu items from a restaurant chain (as opposed to UK/US food tables or the user's own foods). */
+    val isRestaurant: Boolean get() = !isCustom && source.isNotEmpty() && source != "UK" && source != "US"
 }
 
 /**

@@ -136,4 +136,32 @@ class NutritionCalculatorTest {
         val ukBanana = assertNotNull(db.foods.firstOrNull { it.name == "Bananas, flesh only" })
         assertEquals(118.0, ukBanana.defaultPortion()?.grams)
     }
+
+    @Test
+    fun fastFoodChains() {
+        for (chain in listOf("McDonald's", "KFC", "Burger King", "Subway", "Nando's", "Popeyes")) {
+            assertTrue(db.foods.count { it.source == chain } > 50, chain)
+        }
+
+        // Weights published: per 100 g with a 1-item portion.
+        val bigMac = assertNotNull(top("big mac").firstOrNull { it.source == "McDonald's" })
+        assertTrue(bigMac.weightKnown)
+        val bigMacKcal = bigMac.nutrientsFor(assertNotNull(bigMac.defaultPortion()).grams).amount(Nutrient.ENERGY)
+        assertTrue(bigMacKcal in 450.0..560.0, "Big Mac $bigMacKcal")
+
+        // Subway subs default to a 6-inch and offer a footlong.
+        val sub = assertNotNull(top("subway italian bmt sub").firstOrNull { it.source == "Subway" })
+        assertEquals("6-inch", sub.defaultPortion()?.description)
+        assertTrue(sub.portions.any { it.description == "footlong" })
+
+        // KFC doesn't publish weights: values are per item.
+        val zinger = assertNotNull(top("zinger burger").firstOrNull { it.source == "KFC" })
+        assertTrue(!zinger.weightKnown)
+        val item = assertNotNull(zinger.defaultPortion())
+        assertEquals(PER_ITEM_GRAMS, item.grams)
+        assertTrue(zinger.nutrientsFor(item.grams).amount(Nutrient.ENERGY) in 400.0..550.0)
+
+        assertTrue(db.foods.none { it.name.startsWith("McDonald's McDonald's") })
+        assertTrue(db.foods.none { it.source == "Burger King" && "TEST" in it.name })
+    }
 }

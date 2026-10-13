@@ -73,7 +73,15 @@ class FoodDatabase(val foods: List<Food>) {
             return result
         }
 
-        fun normalize(s: String): String = s.lowercase().replace(Regex("[^a-z0-9%]+"), " ").trim()
+        /** Lower-case words only; "McDonald's" -> "mcdonalds", "B.M.T" -> "bmt". */
+        fun normalize(s: String): String = s.lowercase()
+            .replace(APOSTROPHES_AND_ABBREVIATION_DOTS, "")
+            .replace(NON_WORD, " ")
+            .trim()
+
+        private val APOSTROPHES_AND_ABBREVIATION_DOTS = Regex("['’]|(?<=[a-z])\\.(?=[a-z])")
+        private val NON_WORD = Regex("[^a-z0-9%]+")
+        private val ES_PLURAL = Regex("..(oes|ches|shes|sses|xes)$")
 
         /** Search helper shared with custom foods. */
         fun rank(foods: List<Food>, query: String, limit: Int = 60): List<Food> =
@@ -123,7 +131,7 @@ class FoodDatabase(val foods: List<Food>) {
 
         private fun variants(token: String): List<String> {
             val list = mutableListOf(token)
-            if (token.length > 4 && token.endsWith("es")) list += token.dropLast(2)
+            if (ES_PLURAL.containsMatchIn(token)) list += token.dropLast(2) // potatoes, peaches, boxes
             if (token.length > 3 && token.endsWith("s")) list += token.dropLast(1)
             for (t in list.toList()) SYNONYMS[t]?.let { list += it }
             return list.distinct()

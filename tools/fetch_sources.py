@@ -134,8 +134,6 @@ async def fetch_mcdonalds(page, context):
         except Exception as e:  # noqa: BLE001
             print(f"McDonald's: {url}: {type(e).__name__}")
             continue
-        if len(seen) == 1:
-            save_raw("debug_mcdonalds_menu.html", html.encode())
         ids |= set(re.findall(r'data-product-id="(\d+)"', html))
         for path in re.findall(r'(/gb/en-gb/(?:full-menu|menu|product)/[a-z0-9\-/]+\.html)', html):
             if MCD + path not in seen:

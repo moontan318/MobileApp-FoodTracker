@@ -1,6 +1,18 @@
 package com.mealmacros.app.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import com.mealmacros.core.DiaryEdits
+import com.mealmacros.core.DiaryEntry
+import com.mealmacros.core.Nutrient
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,6 +77,7 @@ fun HomeScreen(vm: AppViewModel) {
                     when (vm.tab) {
                         HomeTab.RECIPES -> "My recipes"
                         HomeTab.DIARY -> "Food diary"
+                        HomeTab.DASHBOARD -> "Dashboard"
                         HomeTab.FOODS -> "My foods"
                     }
                 )
@@ -83,6 +96,12 @@ fun HomeScreen(vm: AppViewModel) {
                     onClick = { vm.tab = HomeTab.DIARY },
                     icon = { Icon(Icons.Filled.DateRange, null) },
                     label = { Text("Diary") },
+                )
+                NavigationBarItem(
+                    selected = vm.tab == HomeTab.DASHBOARD,
+                    onClick = { vm.tab = HomeTab.DASHBOARD },
+                    icon = { Icon(BarChartIcon, null) },
+                    label = { Text("Dashboard") },
                 )
                 NavigationBarItem(
                     selected = vm.tab == HomeTab.FOODS,
@@ -104,6 +123,7 @@ fun HomeScreen(vm: AppViewModel) {
                     icon = { Icon(Icons.Filled.Add, null) },
                     text = { Text("New food") },
                 )
+                HomeTab.DASHBOARD -> {}
                 HomeTab.DIARY -> ExtendedFloatingActionButton(
                     onClick = { vm.navigate(Screen.FoodSearch(SearchTarget.DIARY)) },
                     icon = { Icon(Icons.Filled.Add, null) },
@@ -116,6 +136,7 @@ fun HomeScreen(vm: AppViewModel) {
             when (vm.tab) {
                 HomeTab.RECIPES -> RecipeList(vm)
                 HomeTab.DIARY -> DiaryTab(vm)
+                HomeTab.DASHBOARD -> DashboardTab(vm)
                 HomeTab.FOODS -> CustomFoodList(vm)
             }
         }
@@ -161,6 +182,7 @@ private fun RecipeList(vm: AppViewModel) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun DiaryTab(vm: AppViewModel) {
     val zone = ZoneId.systemDefault()
@@ -170,7 +192,15 @@ private fun DiaryTab(vm: AppViewModel) {
         .sortedBy { it.timestamp }
     val totals = NutrientProfile.sum(entries.map { it.nutrients })
     val timeFormat = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-    var pendingDelete by rememberSaveable { mutableStateOf<String?>(null) }
+
+    var selected by remember { mutableStateOf(emptySet<String>()) }
+    var editing by remember { mutableStateOf<DiaryEntry?>(null) }
+    var groupAmount by remember { mutableStateOf(false) }
+    var groupTime by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
+    LaunchedEffect(vm.diaryDay) { selected = emptySet() }
+    val selectedEntries = entries.filter { it.id in selected }
+    val selecting = selectedEntries.isNotEmpty()
 
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 96.dp),
@@ -196,6 +226,32 @@ private fun DiaryTab(vm: AppViewModel) {
                 }
             }
         }
+        if (selecting) {
+            item {
+                Card(
+                    Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                ) {
+                    Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                "${selectedEntries.size} selected · " +
+                                    formatKcal(selectedEntries.sumOf { it.nutrients.amount(Nutrient.ENERGY) }),
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.weight(1f),
+                            )
+                            IconButton(onClick = { selected = emptySet() }) { Icon(Icons.Filled.Close, "Clear selection") }
+                        }
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            TextButton(onClick = { groupAmount = true }) { Text("Amount eaten") }
+                            TextButton(onClick = { groupTime = true }) { Text("Time") }
+                            TextButton(onClick = { confirmDelete = true }) { Text("Remove") }
+                            TextButton(onClick = { selected = entries.map { it.id }.toSet() }) { Text("Select all") }
+                        }
+                    }
+                }
+            }
+        }
         if (entries.isEmpty()) {
             item {
                 Text(
@@ -207,24 +263,47 @@ private fun DiaryTab(vm: AppViewModel) {
                 )
             }
         } else {
+            if (!selecting) {
+                item {
+                    Text(
+                        "Tap an entry to change the amount or time. Press and hold to select several, e.g. a " +
+                            "plate you only ate part of.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             items(entries, key = { it.id }) { entry ->
-                Card(Modifier.fillMaxWidth()) {
-                    Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                val isSelected = entry.id in selected
+                fun toggle() {
+                    selected = if (isSelected) selected - entry.id else selected + entry.id
+                }
+                Card(
+                    Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = { if (selecting) toggle() else editing = entry },
+                            onLongClick = { toggle() },
+                        ),
+                    colors = if (isSelected) {
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    } else {
+                        CardDefaults.cardColors()
+                    },
+                ) {
+                    Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        if (selecting) {
+                            Checkbox(checked = isSelected, onCheckedChange = { toggle() })
+                        }
                         Column(Modifier.weight(1f)) {
                             Text(entry.name, style = MaterialTheme.typography.titleSmall)
                             Text(
-                                listOfNotNull(
-                                    Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat),
-                                    entry.amountLabel,
-                                    entry.grams.takeIf { it > 0 }?.let(::formatGrams),
-                                ).joinToString(" · "),
+                                Instant.ofEpochMilli(entry.timestamp).atZone(zone).format(timeFormat) + " · " +
+                                    entryAmount(entry),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Text(macroSummary(entry.nutrients), style = MaterialTheme.typography.bodyMedium)
-                        }
-                        IconButton(onClick = { pendingDelete = entry.id }) {
-                            Icon(Icons.Filled.Delete, "Remove")
                         }
                     }
                 }
@@ -235,14 +314,45 @@ private fun DiaryTab(vm: AppViewModel) {
         }
     }
 
-    pendingDelete?.let { id ->
-        AlertDialog(
-            onDismissRequest = { pendingDelete = null },
-            title = { Text("Remove entry?") },
-            confirmButton = {
-                TextButton(onClick = { vm.deleteDiaryEntry(id); pendingDelete = null }) { Text("Remove") }
+    editing?.let { entry ->
+        EditEntryDialog(
+            entry = entry,
+            onDismiss = { editing = null },
+            onSave = { vm.updateDiaryEntries(listOf(it)); editing = null },
+            onDelete = { vm.deleteDiaryEntries(setOf(entry.id)); editing = null },
+        )
+    }
+    if (groupAmount && selecting) {
+        GroupAmountDialog(
+            entries = selectedEntries,
+            onDismiss = { groupAmount = false },
+            onSave = { vm.updateDiaryEntries(it); groupAmount = false; selected = emptySet() },
+        )
+    }
+    if (groupTime && selecting) {
+        TimeDialog(
+            title = "Time eaten (${selectedEntries.size} items)",
+            initial = entryTime(selectedEntries.first()),
+            onDismiss = { groupTime = false },
+            onConfirm = { t ->
+                vm.updateDiaryEntries(selectedEntries.map { DiaryEdits.atTime(it, t) })
+                groupTime = false
+                selected = emptySet()
             },
-            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text("Cancel") } },
+        )
+    }
+    if (confirmDelete && selecting) {
+        AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text("Remove ${selectedEntries.size} entries?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    vm.deleteDiaryEntries(selected)
+                    selected = emptySet()
+                    confirmDelete = false
+                }) { Text("Remove") }
+            },
+            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Cancel") } },
         )
     }
 }

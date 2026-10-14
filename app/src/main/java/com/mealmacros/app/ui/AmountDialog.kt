@@ -27,9 +27,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import java.time.LocalTime
 import com.mealmacros.app.Amount
-import com.mealmacros.app.formatPlain
 import com.mealmacros.app.parseNumber
+import com.mealmacros.core.DiaryEntry
 import com.mealmacros.core.Food
 import com.mealmacros.core.Nutrient
 import com.mealmacros.core.Portion
@@ -50,6 +51,8 @@ fun AmountDialog(
     preferPortion: Boolean,
     allowUnknownWeight: Boolean,
     onDismiss: () -> Unit,
+    /** When set, the dialog also asks what time the food was eaten (diary logging). */
+    initialTime: LocalTime? = null,
     onConfirm: (Amount) -> Unit,
 ) {
     // null = grams
@@ -59,6 +62,7 @@ fun AmountDialog(
     val blocked = !food.weightKnown && !allowUnknownWeight
     var gramsText by remember { mutableStateOf("") }
     var quantityText by remember { mutableStateOf("1") }
+    var time by remember { mutableStateOf(initialTime) }
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(portion == null) { if (portion == null) focusRequester.requestFocus() }
 
@@ -67,7 +71,7 @@ fun AmountDialog(
             parseNumber(gramsText)?.takeIf { it > 0 }?.let { Amount(it) }
         } else {
             parseNumber(quantityText)?.takeIf { it > 0 }?.let { q ->
-                Amount(q * p.grams, "${formatPlain(q)} × ${p.description}")
+                Amount(q * p.grams, DiaryEntry.measureLabel(q, p.description), q, p.description)
             }
         }
     }
@@ -153,6 +157,7 @@ fun AmountDialog(
                         modifier = Modifier.padding(top = 8.dp),
                     )
                 }
+                time?.let { t -> TimeRow(t, onChange = { time = it }, modifier = Modifier.padding(top = 4.dp)) }
                 if (!food.per100g.isKnown(Nutrient.ENERGY)) {
                     Text(
                         "This food has no energy data.",
@@ -163,7 +168,7 @@ fun AmountDialog(
             }
         },
         confirmButton = {
-            TextButton(enabled = amount != null && !blocked, onClick = { amount?.let(onConfirm) }) { Text(confirmLabel) }
+            TextButton(enabled = amount != null && !blocked, onClick = { amount?.let { onConfirm(it.copy(time = time)) } }) { Text(confirmLabel) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
     )

@@ -75,6 +75,7 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
     var portionText by rememberSaveable(recipeId) { mutableStateOf("100") }
     val portionGrams = parseNumber(portionText)?.takeIf { it >= 0 }
     var menuOpen by remember { mutableStateOf(false) }
+    var logTime by remember { mutableStateOf(vm.defaultLogTime()) }
     var confirmDelete by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -111,7 +112,7 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
                 Button(
                     onClick = {
                         val grams = portionGrams ?: return@Button
-                        vm.logPortion(recipe, grams)
+                        vm.logPortion(recipe, grams, logTime)
                         focus.clearFocus()
                         scope.launch { snackbar.showSnackbar("Logged ${formatGrams(grams)} of ${recipe.name} to ${vm.diaryDayLabel()}") }
                     },
@@ -135,6 +136,7 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
         ) {
             RecipeSummary(recipe)
             PortionInput(recipe, portionText, onChange = { portionText = it })
+            TimeRow(logTime, onChange = { logTime = it }, modifier = Modifier.padding(horizontal = 4.dp))
             if (portionGrams != null) {
                 val portion = NutritionCalculator.portion(recipe, portionGrams)
                 PortionContents(recipe, portion)

@@ -173,6 +173,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             preferPortion = forDiary,
             allowUnknownWeight = forDiary,
             onDismiss = { selected = null },
+            initialTime = if (forDiary) vm.defaultLogTime() else null,
             onConfirm = { amount ->
                 selected = null
                 if (forDiary) {

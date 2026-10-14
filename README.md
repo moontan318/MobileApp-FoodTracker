@@ -30,7 +30,15 @@ nutrition in whatever portion you eat.
   add "1 medium banana" (118 g), "2 large eggs" or "1 cup cooked rice" without
   weighing. Your own foods can have a portion too (e.g. "1 bar = 45 g").
 * **Food diary**: log recipe portions or individual foods (by weight or size) to
-  any day and see daily totals.
+  any day, at the time you ate them, and see daily totals.
+  * Tap an entry to change how much you ate (e.g. 2 sausages → 1) or when; the
+    nutrition is rescaled.
+  * Press and hold to select several entries, then say how much of the group you
+    actually ate (e.g. 200 g of a plate of sausages, chips and beans, or 50%) -
+    every item keeps its share - or change their time together.
+* **Dashboard**: pick one or more nutrients and chart them by hour for a day, by day
+  for a week or month, or as the daily average per month for a year, against the
+  daily value.
 
 ## Installing on an Android phone
 

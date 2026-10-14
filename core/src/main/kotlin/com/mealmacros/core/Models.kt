@@ -73,7 +73,11 @@ data class Recipe(
 
 /**
  * A logged recipe portion or single food. Nutrients are snapshotted so later edits
- * don't rewrite history. [amountLabel] describes a household measure, e.g. "1 × medium".
+ * don't rewrite history.
+ *
+ * [grams] is 0 when the weight isn't known (restaurant items logged per item). When the
+ * entry was logged as a household measure, [quantity] × [portion] describes it (e.g.
+ * 2 × "medium"); [amountLabel] is the display text for that measure.
  */
 data class DiaryEntry(
     val id: String,
@@ -84,4 +88,42 @@ data class DiaryEntry(
     val recipeId: String? = null,
     val foodId: String? = null,
     val amountLabel: String? = null,
-)
+    val quantity: Double? = null,
+    val portion: String? = null,
+) {
+    val weightKnown: Boolean get() = grams > 0
+
+    /** The measure the entry was logged with, from its fields or (older entries) its label. */
+    val measure: Pair<Double, String>?
+        get() {
+            if (quantity != null && portion != null) return quantity to portion
+            val m = amountLabel?.let { LABEL.matchEntire(it) } ?: return null
+            val q = m.groupValues[1].toDoubleOrNull() ?: return null
+            return q to m.groupValues[2]
+        }
+
+    /** The same entry with everything (weight, quantity, nutrients) multiplied by [factor]. */
+    fun scaled(factor: Double): DiaryEntry {
+        val m = measure
+        val q = m?.first?.times(factor)
+        return copy(
+            grams = grams * factor,
+            nutrients = nutrients * factor,
+            quantity = q,
+            portion = m?.second,
+            amountLabel = if (m != null) measureLabel(q!!, m.second) else amountLabel,
+        )
+    }
+
+    companion object {
+        private val LABEL = Regex("""^([0-9]+(?:\.[0-9]+)?) × (.+)$""")
+
+        /** "2 × medium", with whole numbers shown without decimals and others to 2 places. */
+        fun measureLabel(quantity: Double, portion: String): String = "${formatQuantity(quantity)} × $portion"
+
+        fun formatQuantity(q: Double): String {
+            val rounded = Math.round(q * 100) / 100.0
+            return if (rounded == Math.floor(rounded)) rounded.toLong().toString() else rounded.toString()
+        }
+    }
+}

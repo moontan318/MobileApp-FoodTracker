@@ -4,6 +4,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  # Commits made by "Refresh food data" don't trigger push builds, so rebuild (and
+  # release) once it finishes, picking up the refreshed database.
+  workflow_run:
+    workflows: ["Refresh food data"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: write
@@ -11,6 +17,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v5
 

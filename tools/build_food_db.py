@@ -677,6 +677,8 @@ def load_off():
             values["sodium"] = salt * 400.0
         brand = off_case(row["brand"])
         product = off_case(row["product_name"])
+        if len(brand.split()) >= 4:  # the full product name typed into the brand
+            product, brand = brand, brand.split()[0]
         name = product if not brand or product.lower().startswith(brand.lower()) else f"{brand} {product}"
         fid = f"off:{row['code']}"
         foods.append({"id": fid, "name": name, "group": OFF_GROUP, "source": brand or "Product", "common": "",

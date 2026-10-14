@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.mealmacros.app.data.HttpError
 import com.mealmacros.app.data.JsonStore
 import com.mealmacros.app.data.UserData
 import com.mealmacros.app.data.WebPage
@@ -271,7 +272,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 OnlineSearch(query, results = results, error = if (results.isEmpty()) "No products found online." else null)
             } catch (e: Exception) {
                 Log.w(TAG, "Online search failed", e)
-                OnlineSearch(query, error = "Online search failed: ${e.message ?: e.javaClass.simpleName}")
+                val reason = when {
+                    e is HttpError && (e.code == 503 || e.code == 429 || e.code == 502) ->
+                        "Open Food Facts is busy right now. Try again in a minute."
+                    e is java.io.IOException -> "Couldn't reach Open Food Facts. Check your internet connection."
+                    else -> "Online search failed: ${e.message ?: e.javaClass.simpleName}"
+                }
+                OnlineSearch(query, error = reason)
             }
         }
     }
@@ -306,7 +313,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         "Use “Create your own food” to add it from the label."
                 }
             } catch (e: Exception) {
-                barcodeMessage = "Barcode $digits isn't in Open Food Facts yet. Use “Create your own food” to add it from the label."
+                Log.w(TAG, "Barcode lookup failed", e)
+                barcodeMessage = if (e is HttpError && e.code == 404) {
+                    "Barcode $digits isn't in Open Food Facts yet. Use “Create your own food” to add it from the label."
+                } else {
+                    "Couldn't look up barcode $digits just now (Open Food Facts may be busy). Try again in a minute."
+                }
             }
         }
     }

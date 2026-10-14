@@ -23,9 +23,17 @@ object OpenFoodFacts {
 
     private const val FIELDS = "code,product_name,product_name_en,brands,quantity,serving_size,serving_quantity,nutriments"
 
-    fun searchUrl(query: String, pageSize: Int = 30): String =
-        "https://uk.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1" +
-            "&page_size=$pageSize&fields=$FIELDS&search_terms=" + URLEncoder.encode(query.trim(), "UTF-8")
+    /**
+     * Full-text search of UK products with Open Food Facts' search service (search-a-licious).
+     * The older cgi/search.pl and api/v2/search endpoints often answer 503 when busy.
+     */
+    fun searchUrl(query: String, pageSize: Int = 30): String {
+        // The query is Lucene syntax: keep the user's words only, so ":" or quotes can't break it.
+        val words = query.replace(Regex("""[^\p{L}\p{N}'&\s-]"""), " ").trim().replace(Regex("""\s+"""), " ")
+        val q = "$words countries_tags:\"en:united-kingdom\""
+        return "https://search.openfoodfacts.org/search?langs=en&page_size=$pageSize&fields=$FIELDS&q=" +
+            URLEncoder.encode(q, "UTF-8").replace("+", "%20")
+    }
 
     fun productUrl(barcode: String): String =
         "https://world.openfoodfacts.org/api/v2/product/${barcode.filter { it.isDigit() }}.json?fields=$FIELDS"
@@ -70,10 +78,15 @@ object OpenFoodFacts {
 
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
-    /** Products from a search response, best first; products without basic nutrition are dropped. */
+    /**
+     * Products from a search response ("hits" from the search service, "products" from the
+     * older API), best first. Products without basic nutrition, and repeats, are dropped.
+     */
     fun parseSearch(body: String): List<Food> {
-        val products = json.parseToJsonElement(body).jsonObject["products"] as? JsonArray ?: return emptyList()
+        val root = json.parseToJsonElement(body).jsonObject
+        val products = (root["hits"] ?: root["products"]) as? JsonArray ?: return emptyList()
         return products.mapNotNull { (it as? JsonObject)?.let(::parseProduct) }
+            .distinctBy { it.name.lowercase() to it.per100g.amount(Nutrient.ENERGY).toInt() }
     }
 
     /** The product in a barcode lookup response, or null when it isn't known. */
@@ -99,8 +112,16 @@ object OpenFoodFacts {
         if (required.any { it !in values }) return null
         if (values.getValue(Nutrient.ENERGY) !in 0.0..950.0) return null // obviously wrong data
 
-        val brand = p.text("brands")?.split(',')?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }?.let(::tidyCase)
-        val name = if (brand != null && !productName.startsWith(brand, ignoreCase = true)) "$brand $productName" else productName
+        // "brands" is "Walkers,PepsiCo" from the product API and ["Walkers"] from the search service.
+        val brands = (p["brands"] as? JsonArray)?.firstOrNull()?.let { (it as? JsonPrimitive)?.contentOrNull } ?: p.text("brands")
+        var brand = brands?.split(',')?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }?.let(::tidyCase)
+        var name = productName
+        if (brand != null && brand.split(' ').size >= 4) {
+            // The full product name typed into the brand ("Tesco Smoked Ham and Cheddar sandwich").
+            name = brand
+            brand = brand.substringBefore(' ')
+        }
+        if (brand != null && !name.startsWith(brand, ignoreCase = true)) name = "$brand $name"
         return Food(
             id = ID_PREFIX + code,
             name = name,

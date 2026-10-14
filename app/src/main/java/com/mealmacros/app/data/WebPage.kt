@@ -11,15 +11,15 @@ object WebPage {
     private const val USER_AGENT =
         "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
 
-    fun download(url: String): String {
+    fun download(url: String, userAgent: String = USER_AGENT, accept: String = "text/html,application/xhtml+xml"): String {
         var current = URL(url)
         repeat(5) { // follow redirects, including http -> https
             val conn = current.openConnection() as HttpURLConnection
             conn.instanceFollowRedirects = false
             conn.connectTimeout = 15_000
             conn.readTimeout = 20_000
-            conn.setRequestProperty("User-Agent", USER_AGENT)
-            conn.setRequestProperty("Accept", "text/html,application/xhtml+xml")
+            conn.setRequestProperty("User-Agent", userAgent)
+            conn.setRequestProperty("Accept", accept)
             conn.setRequestProperty("Accept-Language", "en-GB,en;q=0.9")
             try {
                 val code = conn.responseCode

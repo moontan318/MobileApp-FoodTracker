@@ -20,6 +20,7 @@ import com.mealmacros.core.NutritionCalculator
 import com.mealmacros.core.Nutrient
 import com.mealmacros.core.ImportedRecipe
 import com.mealmacros.core.NutrientProfile
+import com.mealmacros.core.OpenFoodFacts
 import com.mealmacros.core.Recipe
 import com.mealmacros.core.RecipeImport
 import com.mealmacros.core.StatsRange
@@ -50,6 +51,14 @@ sealed interface Screen {
     data class CustomFoodEditor(val foodId: String?) : Screen
     data class RecipeImport(val url: String) : Screen
 }
+
+/** Online product search (Open Food Facts) for the food search screen. */
+data class OnlineSearch(
+    val query: String = "",
+    val loading: Boolean = false,
+    val results: List<Food> = emptyList(),
+    val error: String? = null,
+)
 
 /** Progress of importing a recipe from a web page. */
 data class ImportState(val loading: Boolean = false, val error: String? = null)
@@ -243,6 +252,70 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 d.copy(items = d.items + DraftItem(nextDraftKey++, Ingredient.of(food, amount.grams)))
             }
         }
+    }
+
+    // --- Packaged foods online (Open Food Facts) --------------------------------------------------
+
+    var onlineSearch by mutableStateOf(OnlineSearch())
+        private set
+
+    fun searchOnline(query: String) {
+        if (query.isBlank()) return
+        onlineSearch = OnlineSearch(query = query, loading = true)
+        viewModelScope.launch {
+            onlineSearch = try {
+                val body = withContext(Dispatchers.IO) {
+                    WebPage.download(OpenFoodFacts.searchUrl(query), OpenFoodFacts.USER_AGENT, accept = "application/json")
+                }
+                val results = withContext(Dispatchers.Default) { OpenFoodFacts.parseSearch(body) }
+                OnlineSearch(query, results = results, error = if (results.isEmpty()) "No products found online." else null)
+            } catch (e: Exception) {
+                Log.w(TAG, "Online search failed", e)
+                OnlineSearch(query, error = "Online search failed: ${e.message ?: e.javaClass.simpleName}")
+            }
+        }
+    }
+
+    fun clearOnlineSearch() {
+        onlineSearch = OnlineSearch()
+    }
+
+    /** Message shown after a barcode scan that found nothing. */
+    var barcodeMessage by mutableStateOf<String?>(null)
+
+    /** Finds a scanned barcode in the bundled products, then online. */
+    fun lookupBarcode(code: String, onFound: (Food) -> Unit) {
+        val digits = code.filter { it.isDigit() }
+        if (digits.isEmpty()) return
+        (foodDatabase?.get(OpenFoodFacts.ID_PREFIX + digits) ?: customFood(OpenFoodFacts.ID_PREFIX + digits))?.let {
+            onFound(it)
+            return
+        }
+        barcodeMessage = "Looking up $digits…"
+        viewModelScope.launch {
+            try {
+                val body = withContext(Dispatchers.IO) {
+                    WebPage.download(OpenFoodFacts.productUrl(digits), OpenFoodFacts.USER_AGENT, accept = "application/json")
+                }
+                val food = withContext(Dispatchers.Default) { OpenFoodFacts.parseProductResponse(body) }
+                if (food != null) {
+                    barcodeMessage = null
+                    onFound(food)
+                } else {
+                    barcodeMessage = "Barcode $digits isn't in Open Food Facts yet (or has no nutrition). " +
+                        "Use “Create your own food” to add it from the label."
+                }
+            } catch (e: Exception) {
+                barcodeMessage = "Barcode $digits isn't in Open Food Facts yet. Use “Create your own food” to add it from the label."
+            }
+        }
+    }
+
+    /** Products found online are kept in My foods once used, so they work offline next time. */
+    fun rememberFood(food: Food) {
+        if (!food.id.startsWith(OpenFoodFacts.ID_PREFIX) || foodDatabase?.get(food.id) != null) return
+        if (customFoods.any { it.id == food.id }) return
+        saveCustomFood(food.copy(isCustom = true))
     }
 
     // --- Importing recipes from the web --------------------------------------------------------

@@ -126,9 +126,10 @@ class FoodDatabase(val foods: List<Food>) {
             return score
         }
 
-        private fun sourceBonus(food: Food): Double = when (food.source) {
-            SOURCE_UK -> 2.5
-            "US" -> 0.0
+        private fun sourceBonus(food: Food): Double = when {
+            food.source == SOURCE_UK -> 2.5
+            food.source == "US" -> 0.0
+            food.id.startsWith(OpenFoodFacts.ID_PREFIX) -> 0.5 // supermarket products
             else -> 1.0 // restaurants
         }
 

@@ -6,6 +6,8 @@ followed by tools/build_food_db.py. Writes to tools/sources/:
   cofid/*.csv   the CoFID 2021 sheets used by the build (Open Government Licence v3.0)
   raw/*.gz      menu nutrition published by restaurant chains on their own websites
                 (Greggs, Costa, LEON, Nando's, Popeyes, Burger King, McDonald's, KFC, Subway)
+  raw/off_uk.tsv.gz  the most popular UK supermarket products from Open Food Facts
+                (Open Database Licence), cut down from its full export to the columns we use
 
 McDonald's, KFC and Subway block scripted downloads, so those are fetched through a
 headless Firefox (Playwright) session, the same way a visitor's browser loads them.
@@ -99,6 +101,61 @@ async def attempt_async(name, coro):
         return None
 
 
+OFF_EXPORT = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
+OFF_LIMIT = 30000
+OFF_COLUMNS = ["code", "product_name", "brands", "quantity", "serving_size", "serving_quantity",
+               "energy-kcal_100g", "proteins_100g", "carbohydrates_100g", "sugars_100g", "fiber_100g", "fat_100g",
+               "saturated-fat_100g", "monounsaturated-fat_100g", "polyunsaturated-fat_100g", "cholesterol_100g",
+               "salt_100g", "sodium_100g", "vitamin-a_100g", "vitamin-c_100g", "vitamin-d_100g", "calcium_100g",
+               "iron_100g", "potassium_100g"]
+# Supermarket own brands and big UK brands are kept ahead of other products with the same scan count.
+OFF_UK_BRANDS = {"tesco", "sainsbury's", "asda", "morrisons", "waitrose", "m&s", "marks & spencer", "co-op",
+                 "aldi", "lidl", "iceland", "ocado", "walkers", "ginsters", "warburtons", "heinz", "mcvitie's",
+                 "cadbury", "kingsmill", "hovis", "muller", "birds eye", "quorn", "richmond", "young's"}
+
+
+def off_number(text):
+    try:
+        return float(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def fetch_off():
+    """Streams the Open Food Facts export (~1.3 GB) and keeps the most popular UK products with nutrition."""
+    import io
+    csv.field_size_limit(10**9)
+    req = urllib.request.Request(OFF_EXPORT, headers={"User-Agent": "MealMacros/1.0 (data build; "
+                                                      "github.com/moontan318/MobileApp-FoodTracker)"})
+    best = {}
+    with urllib.request.urlopen(req, timeout=600) as resp:
+        reader = csv.DictReader(io.TextIOWrapper(gzip.GzipFile(fileobj=resp), encoding="utf-8", errors="replace"),
+                                delimiter="\t")
+        for row in reader:
+            if "en:united-kingdom" not in (row.get("countries_tags") or ""):
+                continue
+            name = " ".join((row.get("product_name") or "").split())
+            code = (row.get("code") or "").strip()
+            kcal = off_number(row.get("energy-kcal_100g"))
+            macros = [off_number(row.get(k)) for k in ("proteins_100g", "carbohydrates_100g", "fat_100g")]
+            if not name or not code.isdigit() or kcal is None or not 0 <= kcal <= 950 or None in macros:
+                continue
+            if any(not 0 <= m <= 100 for m in macros) or sum(macros) > 105:
+                continue
+            brand = (row.get("brands") or "").split(",")[0].strip()
+            scans = int(off_number(row.get("unique_scans_n")) or 0)
+            key = (brand.lower(), re.sub(r"[^a-z0-9]+", " ", name.lower()).strip())
+            rank = (scans, brand.lower() in OFF_UK_BRANDS, bool(row.get("serving_quantity")),
+                    int(off_number(row.get("last_modified_t")) or 0))
+            if key not in best or rank > best[key][0]:
+                best[key] = (rank, [code, name, brand] + [" ".join((row.get(c) or "").split()) for c in OFF_COLUMNS[3:]])
+    kept = sorted(best.values(), key=lambda r: r[0], reverse=True)[:OFF_LIMIT]
+    lines = ["\t".join(["code", "product_name", "brand"] + OFF_COLUMNS[3:])]
+    lines += ["\t".join(cells) for _, cells in sorted(kept, key=lambda r: int(r[1][0]))]
+    print(f"Open Food Facts: {len(best)} UK products with nutrition, kept {len(kept)}")
+    save_raw("off_uk.tsv", ("\n".join(lines) + "\n").encode("utf-8"))
+
+
 def fetch_restaurants():
     for name, url in RESTAURANTS.items():
         headers = {"Origin": "https://popeyesuk.com", "Referer": "https://popeyesuk.com/"} if "popeyes" in name else None
@@ -179,4 +236,5 @@ async def fetch_subway(page, context):
 if __name__ == "__main__":
     fetch_cofid()
     fetch_restaurants()
+    attempt("off_uk.tsv", fetch_off)
     asyncio.run(fetch_with_browser())

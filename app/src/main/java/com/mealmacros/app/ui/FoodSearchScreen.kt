@@ -5,15 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.mealmacros.app.AppViewModel
 import com.mealmacros.app.Screen
@@ -63,6 +69,8 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
     val customFoods = vm.customFoods
     val focusRequester = remember { FocusRequester() }
     val snackbar = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    var enteringBarcode by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(query, db, customFoods) {
@@ -114,12 +122,28 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    OutlinedButton(
-                        onClick = { vm.navigate(Screen.CustomFoodEditor(null)) },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Icon(Icons.Filled.Add, null)
-                        Text("Create your own food (from a label)", Modifier.padding(start = 8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(
+                            onClick = {
+                                vm.barcodeMessage = null
+                                scanBarcode(
+                                    context,
+                                    onResult = { code -> vm.lookupBarcode(code) { selected = it } },
+                                    onError = { enteringBarcode = true },
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
+                        ) { Text("Scan barcode") }
+                        OutlinedButton(
+                            onClick = { vm.navigate(Screen.CustomFoodEditor(null)) },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Icon(Icons.Filled.Add, null)
+                            Text("Own food", Modifier.padding(start = 4.dp))
+                        }
+                    }
+                    vm.barcodeMessage?.let {
+                        Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
                     }
                 }
                 if (matchingRecipes.isNotEmpty()) {
@@ -170,8 +194,44 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
                         FoodCard(food, onClick = { selected = food })
                     }
                 }
+                // Packaged foods not in the app: search Open Food Facts.
+                if (query.isNotBlank() && db != null) {
+                    val online = vm.onlineSearch.takeIf { it.query == query }
+                    if (online != null && online.results.isNotEmpty()) {
+                        item { Text("Online · Open Food Facts", style = MaterialTheme.typography.titleSmall) }
+                        items(online.results, key = { "online:" + it.id }) { food ->
+                            FoodCard(food, onClick = { selected = food })
+                        }
+                    } else {
+                        item {
+                            if (online?.loading == true) {
+                                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator()
+                                }
+                            } else {
+                                OutlinedButton(onClick = { vm.searchOnline(query) }, modifier = Modifier.fillMaxWidth()) {
+                                    Icon(Icons.Filled.Search, null)
+                                    Text("Search supermarket products online for “$query”", Modifier.padding(start = 8.dp))
+                                }
+                                online?.error?.let {
+                                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+
+    if (enteringBarcode) {
+        BarcodeEntryDialog(
+            onDismiss = { enteringBarcode = false },
+            onConfirm = { code ->
+                enteringBarcode = false
+                vm.lookupBarcode(code) { selected = it }
+            },
+        )
     }
 
     selected?.let { food ->
@@ -185,6 +245,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             initialGrams = if (forDiary) null else vm.replacingGrams(),
             onConfirm = { amount ->
                 selected = null
+                vm.rememberFood(food) // keep online products for next time
                 if (forDiary) {
                     vm.logFood(food, amount)
                     val what = amount.label ?: formatGrams(amount.grams)
@@ -222,4 +283,32 @@ private fun RecipeResultCard(recipe: Recipe, onClick: () -> Unit) {
             Text(macroSummary(NutritionCalculator.per100g(recipe)), style = MaterialTheme.typography.bodySmall)
         }
     }
+}
+
+/** Typing a barcode in, for phones where the scanner isn't available. */
+@Composable
+private fun BarcodeEntryDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+    var code by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Enter barcode") },
+        text = {
+            Column {
+                Text(
+                    "The camera scanner isn't available, so type the numbers under the barcode.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                OutlinedTextField(
+                    value = code,
+                    onValueChange = { v -> code = v.filter { it.isDigit() }.take(14) },
+                    label = { Text("Barcode") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                )
+            }
+        },
+        confirmButton = { TextButton(enabled = code.length >= 8, onClick = { onConfirm(code) }) { Text("Look up") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    )
 }

@@ -16,6 +16,11 @@ nutrition in whatever portion you eat.
   size and milk) and LEON. Log them as "1 item" or by size. KFC, Nando's and
   Popeyes don't publish item weights, so their items are per item and can be
   logged to the diary but not used as recipe ingredients.
+* **Supermarket products and ready meals** from Open Food Facts: the 30,000 most
+  scanned UK products (Tesco, Sainsbury's, M&S, Walkers, Ginsters...) are built in and
+  work offline, with "1 serving" and "1 pack" sizes from the label. For anything else,
+  tap **Search supermarket products online** or **Scan barcode** on the food search
+  screen. Products you use are saved to My foods so they work offline afterwards.
 * **Portions**: enter the weight you're eating and the app scales every ingredient.
   For example, a recipe of 200 g potatoes + 200 g beef (400 g total) eaten as a 200 g
   portion shows the nutrition of 100 g potatoes + 100 g beef.
@@ -85,11 +90,13 @@ Requires JDK 17 and the Android SDK (API 35).
     (public domain), converted by `tools/convert_sr28.py`.
   * `raw/`: menu nutrition published by the restaurant chains on their websites
     (data feeds, menu pages and the KFC and Subway nutrition PDFs). McDonald's, KFC
-    and Subway are downloaded through a headless Firefox session.
+    and Subway are downloaded through a headless Firefox session. `off_uk.tsv.gz` is
+    the most scanned UK products from the Open Food Facts export
+    (openfoodfacts.org, Open Database Licence), cut down to the columns used.
   * `tools/cofid_portion_links.tsv` gives common UK foods the USDA household
     measures ("1 medium") of the equivalent USDA food.
 
-  To pick up new restaurant menus, run the **Refresh food data** workflow from the
+  To pick up new restaurant menus and supermarket products, run the **Refresh food data** workflow from the
   Actions tab; it re-downloads the sources, rebuilds the database and commits it.
 
 Daily values are the FDA adult reference values (2,000 kcal diet). Nutrition figures

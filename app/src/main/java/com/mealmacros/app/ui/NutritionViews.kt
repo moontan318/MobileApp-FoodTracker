@@ -186,7 +186,8 @@ fun NutritionFootnote(showIncomplete: Boolean) {
         add("– no data available.")
         add(
             "Food data: McCance and Widdowson's Composition of Foods Integrated Dataset (UK, Open Government " +
-                "Licence), USDA SR28, and nutrition published by the restaurant chains."
+                "Licence), USDA SR28, nutrition published by the restaurant chains, and supermarket products " +
+                "from Open Food Facts (openfoodfacts.org, Open Database Licence)."
         )
     }
     Text(

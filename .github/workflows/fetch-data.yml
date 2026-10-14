@@ -1,6 +1,6 @@
 name: Refresh food data
 
-# Re-downloads the UK source data (CoFID and the restaurant menus), rebuilds
+# Re-downloads the UK source data (CoFID, restaurant menus, Open Food Facts), rebuilds
 # app/src/main/assets/foods.tsv and commits the result to the branch it was run on.
 # Run it from the Actions tab ("Run workflow") to pick up menu changes.
 on:
@@ -12,7 +12,7 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v5

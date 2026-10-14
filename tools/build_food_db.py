@@ -7,7 +7,8 @@ Sources (all under tools/sources/; cofid/ and raw/ are refreshed by tools/fetch_
   usda/   USDA SR28 (public domain), from tools/convert_sr28.py. Renamed to UK wording;
           US-branded and US-restaurant items are dropped.
   raw/    Menu nutrition published by restaurant chains on their own websites (Greggs, Costa,
-          LEON, McDonald's, KFC, Burger King, Subway, Nando's, Popeyes).
+          LEON, McDonald's, KFC, Burger King, Subway, Nando's, Popeyes), and the most popular
+          UK supermarket products from Open Food Facts (off_uk.tsv.gz, Open Database Licence).
 
 Requires pdfplumber (pip install pdfplumber) for the KFC and Subway PDFs.
 
@@ -614,6 +615,79 @@ def load_mcdonalds():
 
 
 # --------------------------------------------------------------------------------------------
+# Supermarket products (Open Food Facts). Keep in step with core/.../OpenFoodFacts.kt.
+# --------------------------------------------------------------------------------------------
+
+OFF_GROUP = "Supermarket"
+OFF_NUTRIENTS = {  # Open Food Facts column -> (our nutrient, multiplier from grams)
+    "energy-kcal_100g": ("energy", 1), "proteins_100g": ("protein", 1), "carbohydrates_100g": ("carbs", 1),
+    "sugars_100g": ("sugars", 1), "fiber_100g": ("fiber", 1), "fat_100g": ("fat", 1),
+    "saturated-fat_100g": ("saturated_fat", 1), "monounsaturated-fat_100g": ("mono_fat", 1),
+    "polyunsaturated-fat_100g": ("poly_fat", 1), "cholesterol_100g": ("cholesterol", 1e3),
+    "vitamin-a_100g": ("vitamin_a", 1e6), "vitamin-c_100g": ("vitamin_c", 1e3), "vitamin-d_100g": ("vitamin_d", 1e6),
+    "calcium_100g": ("calcium", 1e3), "iron_100g": ("iron", 1e3), "potassium_100g": ("potassium", 1e3),
+}
+OFF_PACK = re.compile(r"^(?:(\d+)\s*[x\u00d7]\s*)?(\d+(?:[.,]\d+)?)\s*(g|ml)\b", re.IGNORECASE)
+
+
+def off_number(text):
+    try:
+        return float(text.replace(",", "."))
+    except (AttributeError, ValueError):
+        return None
+
+
+def off_portions(serving_size, serving_quantity, quantity):
+    """"serving (30 g)" from the serving size, and "pack" when the pack is a single weight."""
+    portions = []
+    g = off_number(serving_quantity)
+    if g is not None and 1 <= g <= 3000:
+        label = serving_size.strip()
+        portions.append((f"serving ({label})" if label and len(label) <= 40 else "serving", g))
+    m = OFF_PACK.match(quantity.strip())
+    pack = off_number(m.group(2)) if m else None
+    if pack is not None and 1 <= pack <= 3000 and all(abs(p - pack) >= 0.5 for _, p in portions):
+        portions.append(("pack (1 of a multipack)" if int(m.group(1) or 1) > 1 else "pack", pack))
+    return portions
+
+
+def off_case(text):
+    """"WALKERS" -> "Walkers", "cornish pasty" -> "Cornish pasty"; mixed case is left alone."""
+    if text.isupper() and len(text) > 4:
+        return text.title().replace("'S", "'s")
+    if text.islower():
+        return text[:1].upper() + text[1:]
+    return text
+
+
+def load_off():
+    foods, portions = [], {}
+    if not has_raw("off_uk.tsv.gz"):
+        return foods, portions
+    for row in csv.DictReader(raw("off_uk.tsv.gz").splitlines(), delimiter="\t", quoting=csv.QUOTE_NONE):
+        values = {}
+        for col, (key, mult) in OFF_NUTRIENTS.items():
+            v = off_number(row[col])
+            if v is not None and v >= 0:
+                values[key] = v * mult
+        sodium, salt = off_number(row["sodium_100g"]), off_number(row["salt_100g"])
+        if sodium is not None:
+            values["sodium"] = sodium * 1000.0
+        elif salt is not None:
+            values["sodium"] = salt * 400.0
+        brand = off_case(row["brand"])
+        product = off_case(row["product_name"])
+        name = product if not brand or product.lower().startswith(brand.lower()) else f"{brand} {product}"
+        fid = f"off:{row['code']}"
+        foods.append({"id": fid, "name": name, "group": OFF_GROUP, "source": brand or "Product", "common": "",
+                      "values": values})
+        p = off_portions(row["serving_size"], row["serving_quantity"], row["quantity"])
+        if p:
+            portions[fid] = p
+    return foods, portions
+
+
+# --------------------------------------------------------------------------------------------
 
 def main():
     usda_portions = load_usda_portions()
@@ -637,9 +711,13 @@ def main():
             raise SystemExit(f"bad portion link: {line}")
         portions[by_name[name]] = usda_portions[ndb]
 
-    foods = cofid + restaurants + usda
+    supermarket, p = load_off()
+    portions.update(p)
+
+    foods = cofid + restaurants + supermarket + usda
     ids = [f["id"] for f in foods]
-    dupes = {i for i in ids if ids.count(i) > 1}
+    seen = set()
+    dupes = {i for i in ids if i in seen or seen.add(i)}
     assert not dupes, f"duplicate ids: {sorted(dupes)[:10]}"
 
     with open(ASSETS / "foods.tsv", "w", encoding="utf-8", newline="") as out:
@@ -658,7 +736,8 @@ def main():
 
     by_source = {}
     for f in foods:
-        by_source[f["source"]] = by_source.get(f["source"], 0) + 1
+        source = "Supermarket" if f["group"] == OFF_GROUP else f["source"]
+        by_source[source] = by_source.get(source, 0) + 1
     print(", ".join(f"{k} {v}" for k, v in by_source.items()), f"| total {len(foods)} foods, {count} portions")
 
 

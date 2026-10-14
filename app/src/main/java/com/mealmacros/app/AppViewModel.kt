@@ -15,7 +15,9 @@ import com.mealmacros.core.Food
 import com.mealmacros.core.FoodDatabase
 import com.mealmacros.core.Ingredient
 import com.mealmacros.core.NutritionCalculator
+import com.mealmacros.core.Nutrient
 import com.mealmacros.core.Recipe
+import com.mealmacros.core.StatsRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -23,12 +25,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.UUID
 
-enum class HomeTab { RECIPES, DIARY, FOODS }
+enum class HomeTab { RECIPES, DIARY, DASHBOARD, FOODS }
 
 /** Where a food picked in the search screen goes. */
 enum class SearchTarget { RECIPE, DIARY }
@@ -64,7 +67,14 @@ data class RecipeDraft(
 }
 
 /** An amount of a food chosen by the user; [label] is set for household measures ("1 × medium"). */
-data class Amount(val grams: Double, val label: String? = null)
+data class Amount(
+    val grams: Double,
+    val label: String? = null,
+    val quantity: Double? = null,
+    val portion: String? = null,
+    /** When the food was eaten (on the diary's day); null = now / midday. */
+    val time: LocalTime? = null,
+)
 
 fun parseNumber(text: String): Double? = text.trim().replace(',', '.').toDoubleOrNull()
 
@@ -87,6 +97,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Day shown in the diary; new diary entries are logged to this day. */
     var diaryDay by mutableStateOf(LocalDate.now().toEpochDay())
+
+    // Dashboard selections
+    var statsRange by mutableStateOf(StatsRange.WEEK)
+    var statsAnchor by mutableStateOf(LocalDate.now().toEpochDay())
+    var statsNutrients by mutableStateOf(listOf(Nutrient.ENERGY, Nutrient.PROTEIN))
     val backStack = mutableStateListOf<Screen>(Screen.Home)
     val screen: Screen get() = backStack.last()
 
@@ -238,13 +253,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // --- Diary ------------------------------------------------------------------------------
 
-    fun logPortion(recipe: Recipe, grams: Double) {
+    fun logPortion(recipe: Recipe, grams: Double, time: LocalTime? = null) {
         val portion = NutritionCalculator.portion(recipe, grams)
         diary = diary + DiaryEntry(
             id = UUID.randomUUID().toString(),
             name = recipe.name,
             grams = grams,
-            timestamp = diaryTimestamp(),
+            timestamp = diaryTimestamp(time),
             nutrients = portion.nutrients,
             recipeId = recipe.id,
         )
@@ -256,19 +271,37 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             id = UUID.randomUUID().toString(),
             name = food.name,
             grams = if (food.weightKnown) amount.grams else 0.0, // 0 = weight not published
-            timestamp = diaryTimestamp(),
+            timestamp = diaryTimestamp(amount.time),
             nutrients = food.nutrientsFor(amount.grams),
             foodId = food.id,
             amountLabel = amount.label,
+            quantity = amount.quantity,
+            portion = amount.portion,
         )
         persist()
     }
 
-    /** Now if the diary is showing today, otherwise midday on the day being viewed. */
-    private fun diaryTimestamp(): Long {
+    /** [time] on the diary's day; without one, now if that's today, otherwise midday. */
+    private fun diaryTimestamp(time: LocalTime? = null): Long {
         val day = LocalDate.ofEpochDay(diaryDay)
-        if (day == LocalDate.now()) return System.currentTimeMillis()
-        return day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        if (time == null && day == LocalDate.now()) return System.currentTimeMillis()
+        return day.atTime(time ?: LocalTime.NOON).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    /** Suggested time for a new entry: now when the diary shows today, otherwise midday. */
+    fun defaultLogTime(): LocalTime =
+        if (LocalDate.ofEpochDay(diaryDay) == LocalDate.now()) LocalTime.now().withSecond(0).withNano(0) else LocalTime.NOON
+
+    /** Replaces entries (matched by id) with edited versions. */
+    fun updateDiaryEntries(updated: List<DiaryEntry>) {
+        val byId = updated.associateBy { it.id }
+        diary = diary.map { byId[it.id] ?: it }
+        persist()
+    }
+
+    fun deleteDiaryEntries(ids: Set<String>) {
+        diary = diary.filterNot { it.id in ids }
+        persist()
     }
 
     fun diaryDayLabel(): String {

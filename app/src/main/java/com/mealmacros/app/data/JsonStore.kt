@@ -114,6 +114,8 @@ class JsonStore(file: File) {
             .put("recipeId", e.recipeId ?: JSONObject.NULL)
             .put("foodId", e.foodId ?: JSONObject.NULL)
             .put("amountLabel", e.amountLabel ?: JSONObject.NULL)
+            .put("quantity", e.quantity ?: JSONObject.NULL)
+            .put("portion", e.portion ?: JSONObject.NULL)
             .put("nutrients", encodeProfile(e.nutrients))
 
         private fun decodeEntry(o: JSONObject) = DiaryEntry(
@@ -124,6 +126,8 @@ class JsonStore(file: File) {
             recipeId = if (o.isNull("recipeId")) null else o.getString("recipeId"),
             foodId = if (o.isNull("foodId")) null else o.getString("foodId"),
             amountLabel = if (o.isNull("amountLabel")) null else o.getString("amountLabel"),
+            quantity = if (o.isNull("quantity")) null else o.getDouble("quantity"),
+            portion = if (o.isNull("portion")) null else o.getString("portion"),
             nutrients = decodeProfile(o.optJSONObject("nutrients")),
         )
 

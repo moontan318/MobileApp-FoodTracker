@@ -1,9 +1,13 @@
 package com.mealmacros.app.data
 
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
+
+/** A web server answered with an error status, e.g. 404 (not found) or 503 (busy). */
+class HttpError(val code: Int) : IOException("the site answered HTTP $code")
 
 /** Downloads web pages (recipe import). */
 object WebPage {
@@ -28,7 +32,7 @@ object WebPage {
                     current = URL(current, location)
                     return@repeat
                 }
-                if (code !in 200..299) error("the site answered HTTP $code")
+                if (code !in 200..299) throw HttpError(code)
                 val bytes = conn.inputStream.use { input ->
                     val out = ByteArrayOutputStream()
                     val buf = ByteArray(16 * 1024)

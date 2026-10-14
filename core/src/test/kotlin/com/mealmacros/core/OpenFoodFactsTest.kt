@@ -49,7 +49,9 @@ class OpenFoodFactsTest {
 
     @Test
     fun urls() {
-        assertTrue(OpenFoodFacts.searchUrl("ginsters pasty").endsWith("search_terms=ginsters+pasty"))
+        val url = OpenFoodFacts.searchUrl("ginsters: pasty")
+        assertTrue(url.startsWith("https://search.openfoodfacts.org/search?"))
+        assertTrue(url.endsWith("q=ginsters%20pasty%20countries_tags%3A%22en%3Aunited-kingdom%22"), url)
         assertTrue(OpenFoodFacts.productUrl("5 000328 000001").contains("/product/5000328000001.json"))
     }
 
@@ -60,5 +62,24 @@ class OpenFoodFactsTest {
         assertEquals("M&S", OpenFoodFacts.tidyCase("M&S"))
         assertEquals("Cornish pasty", OpenFoodFacts.tidyCase("cornish pasty"))
         assertEquals("Oven Baked Cheese & Onion", OpenFoodFacts.tidyCase("Oven Baked Cheese & Onion"))
+    }
+
+    @Test
+    fun parsesSearchServiceHits() {
+        // Shape of a search.openfoodfacts.org response: brands is a list, and some products repeat.
+        val body = """
+            {"hits":[
+              {"code":"3038550","product_name":"smoker ham and Cheddar sandwich","brands":["Tesco Smoked Ham and Cheddar sandwich"],
+               "nutriments":{"energy-kcal_100g":235,"proteins_100g":13.4,"carbohydrates_100g":21,"fat_100g":10.2,"salt_100g":0.88}},
+              {"code":"03038550","product_name":"smoker ham and Cheddar sandwich","brands":["Tesco Smoked Ham and Cheddar sandwich"],
+               "nutriments":{"energy-kcal_100g":235,"proteins_100g":13.4,"carbohydrates_100g":21,"fat_100g":10.2,"salt_100g":0.88}},
+              {"code":"5000328210438","product_name":"Walkers oven baked - prawn cocktail","brands":["Walkers"],
+               "nutriments":{"energy-kcal_100g":432,"proteins_100g":6.05,"carbohydrates_100g":72,"fat_100g":12.5}}
+            ],"count":3,"page":1}
+        """.trimIndent()
+        val foods = OpenFoodFacts.parseSearch(body)
+        assertEquals(listOf("Tesco Smoked Ham and Cheddar sandwich", "Walkers oven baked - prawn cocktail"), foods.map { it.name })
+        assertEquals("Tesco", foods[0].source)
+        assertEquals(352.0, foods[0].per100g.amount(Nutrient.SODIUM), 1e-9)
     }
 }

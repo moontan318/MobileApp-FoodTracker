@@ -16,6 +16,8 @@ kotlin {
 }
 
 dependencies {
+    // JSON parsing for imported recipes (schema.org JSON-LD); no compiler plugin needed.
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     testImplementation(kotlin("test"))
 }
 

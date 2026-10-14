@@ -1,6 +1,8 @@
 package com.mealmacros.app.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.CardDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import com.mealmacros.app.AppViewModel
 import com.mealmacros.app.DraftItem
 import com.mealmacros.app.Screen
-import com.mealmacros.app.SearchTarget
 import com.mealmacros.app.formatPlain
 import com.mealmacros.app.parseNumber
 import com.mealmacros.core.Nutrient
@@ -99,6 +100,16 @@ fun RecipeEditorScreen(vm: AppViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+            draft.importSummary?.let { summary ->
+                item {
+                    Card(
+                        Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    ) {
+                        Text(summary, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(12.dp))
+                    }
+                }
+            }
             item {
                 Text("Ingredients", style = MaterialTheme.typography.titleMedium)
                 if (draft.items.isEmpty()) {
@@ -116,18 +127,34 @@ fun RecipeEditorScreen(vm: AppViewModel) {
                     onGramsChange = { grams ->
                         vm.updateDraft { d ->
                             d.copy(items = d.items.map {
-                                if (it.key == item.key) it.copy(ingredient = it.ingredient.copy(grams = grams)) else it
+                                if (it.key == item.key) {
+                                    it.copy(ingredient = it.ingredient.copy(grams = grams), needsReview = false)
+                                } else {
+                                    it
+                                }
                             })
                         }
                     },
+                    onReplace = { vm.startReplaceIngredient(item.key) },
                     onRemove = { vm.updateDraft { d -> d.copy(items = d.items.filterNot { it.key == item.key }) } },
                 )
             }
             item {
-                OutlinedButton(onClick = { vm.navigate(Screen.FoodSearch(SearchTarget.RECIPE)) }, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = { vm.startAddIngredient() }, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Filled.Add, null)
                     Text("Add ingredient", Modifier.padding(start = 8.dp))
                 }
+            }
+            item {
+                OutlinedTextField(
+                    value = draft.servingsText,
+                    onValueChange = { v -> vm.updateDraft { it.copy(servingsText = v.filter { c -> c.isDigit() }.take(3)) } },
+                    label = { Text("Servings (optional)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    supportingText = { Text("Adds a “1 serving” option when logging this recipe.") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             item {
                 OutlinedTextField(
@@ -183,14 +210,38 @@ fun RecipeEditorScreen(vm: AppViewModel) {
 }
 
 @Composable
-private fun IngredientRow(item: DraftItem, onGramsChange: (Double) -> Unit, onRemove: () -> Unit) {
-    var text by remember(item.key) { mutableStateOf(formatPlain(item.ingredient.grams)) }
+private fun IngredientRow(item: DraftItem, onGramsChange: (Double) -> Unit, onReplace: () -> Unit, onRemove: () -> Unit) {
+    val ingredient = item.ingredient
+    val unmatched = ingredient.foodId == AppViewModel.UNMATCHED_FOOD_ID
+    // Re-read the weight when the food is replaced.
+    var text by remember(item.key, ingredient.foodId) { mutableStateOf(formatPlain(Math.round(ingredient.grams * 10) / 10.0)) }
     Card(Modifier.fillMaxWidth()) {
         Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f).padding(end = 8.dp)) {
-                Text(item.ingredient.name, style = MaterialTheme.typography.bodyMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Column(
+                Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+                    .clickable(onClick = onReplace)
+            ) {
+                if (ingredient.sourceText.isNotBlank()) {
+                    Text(
+                        "Recipe: ${ingredient.sourceText}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 Text(
-                    formatKcal(item.ingredient.nutrients.amount(Nutrient.ENERGY)),
+                    if (unmatched) "⚠ No match – tap to choose a food" else (if (item.needsReview) "⚠ " else "") + ingredient.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (unmatched) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    formatKcal(ingredient.nutrients.amount(Nutrient.ENERGY)) +
+                        if (ingredient.sourceText.isNotBlank()) " · tap to change food" else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -203,7 +254,7 @@ private fun IngredientRow(item: DraftItem, onGramsChange: (Double) -> Unit, onRe
                 },
                 suffix = { Text("g") },
                 singleLine = true,
-                isError = parseNumber(text) == null,
+                isError = parseNumber(text) == null || (ingredient.grams <= 0.0 && !unmatched),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.width(110.dp),
             )

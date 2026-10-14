@@ -2,6 +2,7 @@ package com.mealmacros.app.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,7 +74,9 @@ fun RecipeDetailScreen(vm: AppViewModel, recipeId: String) {
         LaunchedEffect(recipeId) { vm.back() }
         return
     }
-    var portionText by rememberSaveable(recipeId) { mutableStateOf("100") }
+    var portionText by rememberSaveable(recipeId) {
+        mutableStateOf(recipe.servingWeight?.roundToLong()?.toString() ?: "100") // one serving if known
+    }
     val portionGrams = parseNumber(portionText)?.takeIf { it >= 0 }
     var menuOpen by remember { mutableStateOf(false) }
     var logTime by remember { mutableStateOf(vm.defaultLogTime()) }
@@ -177,6 +181,12 @@ private fun RecipeSummary(recipe: Recipe) {
                 )
             }
             Text(macroSummary(total), style = MaterialTheme.typography.bodyMedium)
+            recipe.sourceUrl?.let { url ->
+                val uriHandler = LocalUriHandler.current
+                TextButton(onClick = { runCatching { uriHandler.openUri(url) } }, contentPadding = PaddingValues(0.dp)) {
+                    Text("Original recipe: ${url.substringAfter("://").substringBefore("/")}")
+                }
+            }
             if (recipe.notes.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Text(recipe.notes, style = MaterialTheme.typography.bodyMedium)
@@ -220,6 +230,12 @@ private fun PortionInput(recipe: Recipe, text: String, onChange: (String) -> Uni
             )
             if (total > 0) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    recipe.servingWeight?.let { serving ->
+                        SuggestionChip(
+                            onClick = { onChange(formatPlain(serving.roundToLong().toDouble())) },
+                            label = { Text("1 serving (of ${recipe.servings})") },
+                        )
+                    }
                     SuggestionChip(onClick = { onChange("100") }, label = { Text("100 g") })
                     listOf(4 to "¼", 3 to "⅓", 2 to "½").forEach { (div, label) ->
                         SuggestionChip(

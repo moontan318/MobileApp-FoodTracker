@@ -53,6 +53,8 @@ fun AmountDialog(
     onDismiss: () -> Unit,
     /** When set, the dialog also asks what time the food was eaten (diary logging). */
     initialTime: LocalTime? = null,
+    /** Pre-filled weight, e.g. when replacing an ingredient's food. */
+    initialGrams: Double? = null,
     onConfirm: (Amount) -> Unit,
 ) {
     // null = grams
@@ -60,7 +62,9 @@ fun AmountDialog(
         mutableStateOf(if (preferPortion || !food.weightKnown) food.defaultPortion() else null)
     }
     val blocked = !food.weightKnown && !allowUnknownWeight
-    var gramsText by remember { mutableStateOf("") }
+    var gramsText by remember {
+        mutableStateOf(initialGrams?.takeIf { it > 0 }?.let { formatAmountPlain(it) } ?: "")
+    }
     var quantityText by remember { mutableStateOf("1") }
     var time by remember { mutableStateOf(initialTime) }
     val focusRequester = remember { FocusRequester() }
@@ -178,3 +182,8 @@ fun AmountDialog(
 private fun shortDescription(p: Portion): String = p.description.substringBefore(" (").ifBlank { p.description }
 
 private fun portionChipLabel(p: Portion): String = "${shortDescription(p)} · ${formatGrams(p.grams)}"
+
+private fun formatAmountPlain(g: Double): String {
+    val r = Math.round(g * 10) / 10.0
+    return if (r == Math.floor(r)) r.toLong().toString() else r.toString()
+}

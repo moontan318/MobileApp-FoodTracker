@@ -66,12 +66,15 @@ class JsonStore(file: File) {
             .put("cookedWeight", r.cookedWeight ?: JSONObject.NULL)
             .put("notes", r.notes)
             .put("updatedAt", r.updatedAt)
+            .put("servings", r.servings ?: JSONObject.NULL)
+            .put("sourceUrl", r.sourceUrl ?: JSONObject.NULL)
             .put("ingredients", JSONArray(r.ingredients.map {
                 JSONObject()
                     .put("foodId", it.foodId)
                     .put("name", it.name)
                     .put("grams", it.grams)
                     .put("per100g", encodeProfile(it.per100g))
+                    .put("sourceText", it.sourceText)
             }))
 
         private fun decodeRecipe(o: JSONObject) = Recipe(
@@ -80,12 +83,15 @@ class JsonStore(file: File) {
             cookedWeight = if (o.isNull("cookedWeight")) null else o.getDouble("cookedWeight"),
             notes = o.optString("notes"),
             updatedAt = o.optLong("updatedAt"),
+            servings = if (o.isNull("servings")) null else o.getInt("servings"),
+            sourceUrl = if (o.isNull("sourceUrl")) null else o.getString("sourceUrl"),
             ingredients = o.optJSONArray("ingredients").objects().map {
                 Ingredient(
                     foodId = it.getString("foodId"),
                     name = it.getString("name"),
                     grams = it.getDouble("grams"),
                     per100g = decodeProfile(it.optJSONObject("per100g")),
+                    sourceText = it.optString("sourceText"),
                 )
             },
         )

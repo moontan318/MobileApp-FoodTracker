@@ -19,6 +19,12 @@ nutrition in whatever portion you eat.
 * **Portions**: enter the weight you're eating and the app scales every ingredient.
   For example, a recipe of 200 g potatoes + 200 g beef (400 g total) eaten as a 200 g
   portion shows the nutrition of 100 g potatoes + 100 g beef.
+* **Import recipes from the web**: paste a link (or use Share → Meal Macros in your
+  browser) for any site that publishes recipe data, such as BBC Food or BBC Good Food.
+  Ingredient lines ("320g/11½oz pasta", "1 small onion", "½ tsp mustard", "400g tin
+  beans, drained") are converted to grams and matched to foods; you then review the
+  recipe, swap any food or weight for what you actually used, and save. Servings and
+  the source link are kept, with a "1 serving" portion button.
 * **Cooked weight** (optional): weigh the finished dish so portions account for water
   lost or gained during cooking.
 * **Detailed nutrition**: energy (kcal and kJ), protein, carbohydrates, fibre, sugars,

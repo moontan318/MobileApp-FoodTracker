@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.mealmacros.core.DiaryEdits
@@ -146,18 +147,28 @@ fun HomeScreen(vm: AppViewModel) {
 @Composable
 private fun RecipeList(vm: AppViewModel) {
     val recipes = vm.recipes.sortedBy { it.name.lowercase() }
-    if (recipes.isEmpty()) {
-        EmptyState(
-            "No recipes yet",
-            "Tap “New recipe”, add your ingredients and their weights, and the app will work out the " +
-                "calories, macros, vitamins and minerals for any portion you eat.",
-        )
-        return
-    }
     LazyColumn(
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        item {
+            OutlinedButton(onClick = { vm.navigate(Screen.RecipeImport("")) }, modifier = Modifier.fillMaxWidth()) {
+                Text("Import a recipe from the web")
+            }
+        }
+        if (recipes.isEmpty()) {
+            item {
+                Text(
+                    "No recipes yet. Tap “New recipe”, add your ingredients and their weights, and the app will " +
+                        "work out the calories, macros, vitamins and minerals for any portion you eat. Or import " +
+                        "one from a recipe website and adjust it to what you cooked.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(24.dp),
+                )
+            }
+        }
         items(recipes, key = { it.id }) { recipe ->
             val per100 = NutritionCalculator.per100g(recipe)
             Card(

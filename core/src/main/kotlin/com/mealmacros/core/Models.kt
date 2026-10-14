@@ -45,6 +45,8 @@ data class Ingredient(
     val name: String,
     val grams: Double,
     val per100g: NutrientProfile,
+    /** For imported recipes: the ingredient as the recipe wrote it, e.g. "1 small onion, chopped". */
+    val sourceText: String = "",
 ) {
     val nutrients: NutrientProfile get() = per100g * (grams / 100.0)
 
@@ -65,7 +67,14 @@ data class Recipe(
     val cookedWeight: Double? = null,
     val notes: String = "",
     val updatedAt: Long = 0L,
+    /** How many servings the recipe makes, if known. */
+    val servings: Int? = null,
+    /** Web page the recipe was imported from. */
+    val sourceUrl: String? = null,
 ) {
+    /** Weight of one serving of the finished recipe. */
+    val servingWeight: Double? get() = servings?.takeIf { it > 0 && totalWeight > 0 }?.let { totalWeight / it }
+
     val rawWeight: Double get() = ingredients.sumOf { it.grams }
 
     val totalWeight: Double get() = cookedWeight?.takeIf { it > 0 } ?: rawWeight

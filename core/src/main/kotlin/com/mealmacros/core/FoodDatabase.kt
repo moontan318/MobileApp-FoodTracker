@@ -19,6 +19,11 @@ class FoodDatabase(val foods: List<Food>) {
 
     fun get(id: String): Food? = byId[id]
 
+    private val byName: Map<String, Food> by lazy { foods.reversed().associateBy { it.name } } // first wins
+
+    /** A food by its exact name (UK foods first, as they come first in the file). */
+    fun byName(name: String): Food? = byName[name]
+
     /** Foods whose name contains every word of [query], best matches first. */
     fun search(query: String, limit: Int = 60): List<Food> =
         rank(foods, searchText, query, limit)

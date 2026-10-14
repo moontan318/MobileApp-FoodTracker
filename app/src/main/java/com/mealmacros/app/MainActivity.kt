@@ -1,5 +1,6 @@
 package com.mealmacros.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -19,6 +20,7 @@ import com.mealmacros.app.ui.HomeScreen
 import com.mealmacros.app.ui.MealMacrosTheme
 import com.mealmacros.app.ui.RecipeDetailScreen
 import com.mealmacros.app.ui.RecipeEditorScreen
+import com.mealmacros.app.ui.RecipeImportScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -27,6 +29,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (savedInstanceState == null) handleShare(intent)
         setContent {
             MealMacrosTheme {
                 Surface(Modifier.fillMaxSize()) {
@@ -34,6 +37,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleShare(intent)
+    }
+
+    /** A web page shared from a browser ("Share → Meal Macros") opens the recipe import. */
+    private fun handleShare(intent: Intent?) {
+        if (intent?.action != Intent.ACTION_SEND) return
+        val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return
+        val url = Regex("""https?://\S+""").find(text)?.value ?: return
+        vm.navigate(Screen.RecipeImport(url))
     }
 }
 
@@ -50,5 +66,6 @@ private fun AppRoot(vm: AppViewModel) {
         Screen.RecipeEditor -> RecipeEditorScreen(vm)
         is Screen.FoodSearch -> FoodSearchScreen(vm, screen.target)
         is Screen.CustomFoodEditor -> CustomFoodScreen(vm, screen.foodId)
+        is Screen.RecipeImport -> RecipeImportScreen(vm, screen.url)
     }
 }

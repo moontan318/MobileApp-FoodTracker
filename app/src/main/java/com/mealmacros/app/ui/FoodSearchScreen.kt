@@ -78,7 +78,15 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (forDiary) "Add to diary · ${vm.diaryDayLabel()}" else "Add ingredient") },
+                title = {
+                    Text(
+                        when {
+                            forDiary -> "Add to diary · ${vm.diaryDayLabel()}"
+                            vm.replacingKey != null -> "Replace ingredient"
+                            else -> "Add ingredient"
+                        }
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { vm.back() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
                 },
@@ -174,6 +182,7 @@ fun FoodSearchScreen(vm: AppViewModel, target: SearchTarget) {
             allowUnknownWeight = forDiary,
             onDismiss = { selected = null },
             initialTime = if (forDiary) vm.defaultLogTime() else null,
+            initialGrams = if (forDiary) null else vm.replacingGrams(),
             onConfirm = { amount ->
                 selected = null
                 if (forDiary) {

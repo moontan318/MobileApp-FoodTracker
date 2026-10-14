@@ -1,0 +1,12 @@
+name: Probe Open Food Facts
+on:
+  push:
+    branches: [claude/trusting-galileo-r145fm]
+    paths: [tools/probe/off.py]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - run: python3 -I tools/probe/off.py
